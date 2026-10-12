@@ -19,7 +19,7 @@ async function renderProducts() {
         <p class="brand">brand: ${brandName}</p>
         <p class="price">$${formattedPrice}</p>
         <p class="stock">stock: ${product.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
-        <button onclick="addToCart(${product.id})"></button>
+        <button onclick="addToCart(${product.id})">Add to Cart</button>
         `;
     shopContainer.appendChild(productCard);
     });
