@@ -19,10 +19,13 @@ async function renderProducts() {
         <p class="brand">brand: ${brandName}</p>
         <p class="price">$${formattedPrice}</p>
         <p class="stock">stock: ${product.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
-        <button onclick="addToCart(${product.id})">Add to Cart</button>
-        `;
+        <button class="add-to-cart-btn">Add to cart</button> `;
+        const addToCartBtn = productCard.querySelector(' .add-to-cart-btn');
+        addToCartBtn.addEventListener('click', () => addToCart(product));
+        
     shopContainer.appendChild(productCard);
     });
 }
+
 
 document.addEventListener('DOMContentLoaded', renderProducts);
