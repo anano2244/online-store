@@ -14,7 +14,7 @@ async function fetchCategories(){
         const response = await fetch(`${BASE_URL}/products/categories`);
         return await response.json();
     } catch (error) {
-        console.error('error!couldn/t get categories:', error);
+        console.error('error!couldn\'t get categories:', error);
         return [];
     }
 }
