@@ -3,7 +3,7 @@ function getCart() {
     return cart ? JSON.parse(cart) : [];
 }
 
-function savaCart(cart) {
+function saveCart(cart) {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
 
@@ -15,5 +15,5 @@ function addToCart(product) {
     } else {
         cart.push({...product, quantity: 1});
     }
-    savaCart(cart);
+    saveCart(cart);
 }
