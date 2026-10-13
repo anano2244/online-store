@@ -6,6 +6,10 @@ async function renderProducts() {
         shopContainer.innerHTML = '<p>products couldn\'t found.</p>';
         return;
      }
+     if(Cart.length === 0) {
+        cartContainer.innerHTML = '<p>Your cart is empty</P>';
+        return;
+     }
 
     shopContainer.innerHTML = '';
     products.forEach(product => {
