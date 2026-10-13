@@ -11,6 +11,7 @@ async function renderProducts() {
     products.forEach(product => {
     const formattedPrice = product.price.toFixed(2);
     const brandName = product.brand ? product.brand : 'there is no brand';
+    const isOutOfStock = product.stock === 0 || product.availabilityStatus === ' Out of stock';
     const productCard = document.createElement('div');
     productCard.classList.add('product-card'); 
      productCard.innerHTML = `
@@ -19,7 +20,7 @@ async function renderProducts() {
         <p class="brand">brand: ${brandName}</p>
         <p class="price">$${formattedPrice}</p>
         <p class="stock">stock status: ${product.availabilityStatus}</p>
-        <button class="add-to-cart-btn">Add to cart</button> `;
+        <button class="add-to-cart-btn" ${isOutOfStock ? 'disabled' : ''}>${isOutOfStock ? 'out of stock' : ' Add to cart'}</button> `;
         const addToCartBtn = productCard.querySelector(' .add-to-cart-btn');
         addToCartBtn.addEventListener('click', () => addToCart(product));
         
