@@ -3,14 +3,10 @@ async function renderProducts() {
     const data = await fetchProducts(12, 0);
     const products = data.products;
      if (!products || products.length === 0) {
-        shopContainer.innerHTML = '<p>products couldn\'t found.</p>';
+        shopContainer.innerHTML = '<p class="error-message">products couldn\'t found.</p>';
         return;
      }
-     if(Cart.length === 0) {
-        cartContainer.innerHTML = '<p>Your cart is empty</P>';
-        return;
-     }
-
+    
     shopContainer.innerHTML = '';
     products.forEach(product => {
     const formattedPrice = product.price.toFixed(2);
