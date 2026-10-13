@@ -1,3 +1,4 @@
+/* index html */
 body {
     background-color: #f7f9fa;
     font-family: Arial, Helvetica, sans-serif;
@@ -105,4 +106,119 @@ body {
     .product-card {
         padding: 16px;
     }
+}
+/* css for product html */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+#product-detail-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.product-detail-wrapper {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.product-gallery, .product-info {
+   flex: 1;
+}
+
+#main-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    background-color: #fff;
+    margin-bottom: 15px;
+}
+
+.thumbnail-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.thumb:hover {
+    border-color: #000;
+}
+
+.product-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.product-info h1 {
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.product-info p {
+    margin: 8px 0;
+    font-size: 15px;
+}
+
+.price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #27ae60;
+}
+
+.product-reviews {
+    margin-top: 40px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.product-reviews h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.review-card {
+    background: #fafafa;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.reviewer {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.review-text {
+    font-style: italic;
+    margin: 8px 0;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #777;
+    text-align: right;
+    margin: 0;
 }
