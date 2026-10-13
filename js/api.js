@@ -28,3 +28,15 @@ async function searchProducts(query) {
         return {products: [], total: 0};
     }
 }
+
+async function fetchProductDetails(id) {
+    try {
+        const response = await fetch(`https://dummyjson.com/products/${id}`);
+        const product = await response.json();
+        
+        console.log(product);
+        return product;
+    } catch (error) {
+        console.error("Error fetching product details:", error);
+    }
+}
