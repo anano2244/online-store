@@ -18,7 +18,7 @@ async function renderProducts() {
         <h3>${product.title}</h3>
         <p class="brand">brand: ${brandName}</p>
         <p class="price">$${formattedPrice}</p>
-        <p class="stock">stock: ${product.stock > 0 ? 'In Stock' : 'Out of Stock'}</p>
+        <p class="stock">stock status: ${product.availabilityStatus}</p>
         <button class="add-to-cart-btn">Add to cart</button> `;
         const addToCartBtn = productCard.querySelector(' .add-to-cart-btn');
         addToCartBtn.addEventListener('click', () => addToCart(product));
