@@ -11,7 +11,7 @@ if (productId) {
                 <div class="product-gallery">
                     <img src="${product.thumbnail}" alt="${product.title}" id="main-image">
                    <div class="thumbnail-list">
-                     ${product.images.map(img => <img src="${img}" class="thumb" onclick="document.getElementById('main-image').src='${img}'">).join('')}
+                     ${product.images.map(img => `<img src="${img}" class="thumb" onclick="document.getElementById('main-image').src='${img}'">`).join('')}
                    </div>
                 </div>
 

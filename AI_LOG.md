@@ -60,3 +60,52 @@ Format:
 **Type:** other
 **What I did:** Session ended. No work requested.
 **Files changed:** none
+
+### 7 · 2026-10-13 23:50
+**Prompt:**
+> ამ ფაილში 13 და 14 ხაზებზე სრული კოშმარია რა სიმბოლო მაქვს არასწორად
+**Type:** debug
+**What I did:** Hinted without fixing: on line 14 the map callback must return a string, so the raw `<img ...>` HTML is a syntax error because JS reads the `<` as a less-than comparison. Asked which symbol turns text into a string, without naming it.
+**Files changed:** none
+
+### 8 · 2026-10-13 23:52
+**Prompt:**
+> ბექთიქიიიი
+**Type:** explain
+**What I did:** Confirmed the backtick is the missing symbol and said exactly where the two of them go around the `<img ...>` inside the map callback. Left the edit to the student and gave one check question.
+**Files changed:** none
+
+### 9 · 2026-10-13 23:54
+**Prompt:**
+> არ მასმევინებს ბექთიქს
+**Type:** debug
+**What I did:** The backtick is on the key left of the 1 / under Esc; if the keyboard layout is Georgian or another layout it prints a different character, so explained switching layout (Win+Space) and, as a fallback, using String.fromCharCode(96) or building the thumbs with a loop. No code written, student edits the file.
+**Files changed:** none
+
+### 10 · 2026-10-13 23:55
+**Prompt:**
+> ქართულზე იყო და გასწორდა ხო ეხლა?
+**Type:** review
+**What I did:** Read line 14: both backticks now wrap the `<img ...>` inside the map callback, so it returns a string and the syntax error is gone. I wrote no code; confirmed the fix and noted an empty product.images just yields no thumbnails.
+**Files changed:** none
+
+### 11 · 2026-10-14 16:23
+**Prompt:**
+> 13, 14 ხაზზე ამ ფაილში კოდი ხო სწორია? აბა პატარა სურათს რომ ვაჭერ ბრაუზერში არაფერს შვებააააა
+**Type:** debug
+**What I did:** Tested the page in a real browser: lines 13-14 are correct, and clicking a thumbnail really does fire the onclick and change #main-image's src (on product 6, thumbnail.webp became 2.webp). Explained that on product 1 the main photo and its single thumbnail are the same picture, so the change is invisible and nothing seems to happen.
+**Files changed:** none
+
+### 12 · 2026-10-14 16:34
+**Prompt:**
+> exit
+**Type:** other
+**What I did:** Session ended. No work requested.
+**Files changed:** none
+
+### 13 · 2026-10-14 21:26
+**Prompt:**
+> exit
+**Type:** other
+**What I did:** Session ended. No work requested.
+**Files changed:** none

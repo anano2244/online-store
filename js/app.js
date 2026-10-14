@@ -1,11 +1,16 @@
 const shopContainer = document.querySelector('#shop-container');
-async function renderProducts() {
-    const data = await fetchProducts(12, 0);
-    const products = data.products;
-     if (!products || products.length === 0) {
+async function renderProducts(productsToRender = null) {
+    let products = productsToRender;
+    
+    if (!products) {
+        const data = await fetchProducts(12, 0);
+        products = data.products;
+    }
+
+    if (!products || products.length === 0) {
         shopContainer.innerHTML = '<p class="error-message">products couldn\'t found.</p>';
         return;
-     }
+    }
     
     shopContainer.innerHTML = '';
     products.forEach(product => {
@@ -35,6 +40,18 @@ async function renderProducts() {
     shopContainer.appendChild(productCard);
     });
 }
+const searchInput = document.querySelector('#search-input');
 
+if (searchInput) {
+    searchInput.addEventListener('input', async (e) => {
+        const query = e.target.value.trim();
+        if (query === '') {
+            renderProducts();
+        } else {
+            const data = await searchProducts(query);
+            renderProducts(data.products);
+        }
+    });
+}
 
-document.addEventListener('DOMContentLoaded', renderProducts);
+document.addEventListener('DOMContentLoaded',()=> { renderProducts(); });
