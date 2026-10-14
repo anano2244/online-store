@@ -109,3 +109,59 @@ Format:
 **Type:** other
 **What I did:** Session ended. No work requested.
 **Files changed:** none
+
+### 14 · 2026-10-14 23:02
+**Prompt:**
+> არ დამისვა ყველა საჭირო მოქმედებაზე ნებართვის კითხვები, შეხედე 58 ხაზიდან კოდს 84 ხაზზე გავიჭედე კოდი მიწერია და კატეგორიებს რო ვირჩევ ინფუთში არაფერს აგდებს მაძლევს 400 ს და იპოვნე ბაგი
+**Type:** debug
+**What I did:** Read app.js, api.js and index.html. Found why the category select gives 400 and hinted without fixing: on line 95 the whole category URL is passed as fetchProducts' first argument, which is `limit` (a number), so the request becomes `/products?limit=https://...` and the API rejects it. Pointed out that even a correct URL would not render, and asked what URL the code builds.
+**Files changed:** none
+
+### 15 · 2026-10-14 23:05
+**Prompt:**
+> აუუუ ვერ მივხვდი რაააა როგორ დავფიქსო
+**Type:** debug
+**What I did:** Second hint had not landed, so showed the fix without editing: a small fetchProductsByCategory(slug) in api.js hitting /products/category/<slug>, and a change handler that awaits it and passes data.products to renderProducts. Explained each part and left the typing to the student.
+**Files changed:** none
+
+### 16 · 2026-10-14 23:11
+**Prompt:**
+> ვაიმე არაფერს სვება მაინც რაააა
+**Type:** debug
+**What I did:** Read app.js and api.js. The student kept the new change handler but never added fetchProductsByCategory to api.js, so selecting a category throws "fetchProductsByCategory is not defined" and nothing renders. Hinted: the function app.js calls does not exist yet, add it to api.js, and check the console error.
+**Files changed:** none
+
+### 17 · 2026-10-14 23:29
+**Prompt:**
+> მართალი იყავი მაგრად გავიჭედე არადა
+**Type:** other
+**What I did:** Acknowledged. Checked api.js again: fetchProductsByCategory is still not there, so the category still will not work; the only thing left is to paste that function into api.js. No code written.
+**Files changed:** none
+
+### 18 · 2026-10-14 23:31
+**Prompt:**
+> exit
+**Type:** other
+**What I did:** Session ended. No work requested.
+**Files changed:** none
+
+### 19 · 2026-10-14 23:34
+**Prompt:**
+> ერთი ფუნქცია კატეგორიებს იღებს და მეორე იყენებს
+**Type:** explain
+**What I did:** Student answered my question about why app.js can call api.js's function. Confirmed the division of labour but pointed out the real reason they missed: both files are plain <script> tags, so they share one global scope and a top-level `function` becomes global; index.html loads api.js first, so it exists before app.js runs. One check question, no code.
+**Files changed:** none
+
+### 20 · 2026-10-14 23:35
+**Prompt:**
+> აუ ამდდენი დრო არ მაქვს :დ მოვრცეტ
+**Type:** other
+**What I did:** Student wrapped up, no more work requested. Did not add fetchProductsByCategory. No code written.
+**Files changed:** none
+
+### 21 · 2026-10-14 23:35
+**Prompt:**
+> EXIT
+**Type:** other
+**What I did:** Session ended. No work requested.
+**Files changed:** none

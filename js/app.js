@@ -54,4 +54,57 @@ if (searchInput) {
     });
 }
 
-document.addEventListener('DOMContentLoaded',()=> { renderProducts(); });
+
+async function loadCategories() {
+    console.log('loadCategories ფუნქცია გაეშვა!'); // ამას ვამოწმებთ
+    try {
+        const res = await fetch('https://dummyjson.com/products/categories');
+        const categories = await res.json();
+        const select = document.getElementById('category-select');
+        
+        if (select) {
+            console.log(categories); 
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                const name = typeof category === 'string' ? category : category.name;
+                const slug = typeof category === 'string' ? category : category.slug;
+                
+                option.value = slug;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+        } else {
+            console.log('ვერ მოიძებნა category-select ელემენტი!');
+        }
+    } catch (err) {
+        console.error('couldn\'t load categories:', err);
+    }
+}
+
+const categorySelect = document.getElementById('category-select');
+
+if (categorySelect) {
+        categorySelect.addEventListener('change', async (event) => {
+            const selectedCategory = event.target.value;
+
+            if (selectedCategory === '') {
+                renderProducts();
+            } else {
+                const data = await fetchProductsByCategory(selectedCategory);
+                renderProducts(data.products);
+            }
+        });
+    }
+    async function fetchProductsByCategory(slug) {
+        try {
+            const response = await fetch(`${BASE_URL}/products/category/${slug}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('couldn\'t get category products:', error);
+            return { products: [], total: 0 };
+        }
+    }
+
+
+document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); });
