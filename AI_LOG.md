@@ -192,3 +192,24 @@ Format:
 **Type:** other
 **What I did:** Session ended. No work requested.
 **Files changed:** none
+
+### 26 · 2026-10-15 23:39
+**Prompt:**
+> სს ში საიდ ბარში ვერ ვსვამ ინფუთს და რატოოოო
+**Type:** debug
+**What I did:** Opened the page in a headless browser and measured the real DOM instead of guessing. The checkout input itself is fine: it fits inside the sidebar, nothing covers it, and typing works. The actual problem is that the products grid `#shop-container` sits outside `.main-layout`, so `.products-section` is an empty column and the cart sidebar is pushed to the bottom of the page. No code changed yet.
+**Files changed:** none
+
+### 27 · 2026-10-15 23:50
+**Prompt:**
+> იპოვნე ბაგი და გაასწორე, სიესესში შეზღდუვა არ გაქვს, დაწერე ისე რომ საიდ ბარში დაჯდეს კალათის ინფუთი
+**Type:** code
+**What I did:** Fixed the sidebar layout. Moved `#shop-container` and `#pagination-container` inside `.products-section` and removed the inline styles that were overriding the stylesheet, so the two columns work. Then added `min-width: 0` to `.products-section`, because the grid's `auto-fill` gave it a 1102px min-content and flexbox refused to shrink it, squeezing the sidebar to 100px. Also deleted the duplicate `.main-layout` / `.cart-sidebar` blocks at the end of the stylesheet. Verified in the browser: cart sits beside the products, inputs stay inside the sidebar, columns reflow 3→2→1, no horizontal overflow.
+**Files changed:** `index.html` (lines 26–32), `style.css` (`.products-section` lines 322–325, removed duplicate `.main-layout`/`.cart-sidebar` block at the end)
+
+### 28 · 2026-10-15 23:52
+**Prompt:**
+> exit
+**Type:** other
+**What I did:** Session ended. No work requested.
+**Files changed:** none

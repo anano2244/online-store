@@ -24,8 +24,30 @@
 
     </header>
     <main>
-    <div id="shop-container"></div>
-    <div id="pagination-container"></div>
+    <div class="main-layout">
+    <div class="products-section">
+        <div id="shop-container"></div>
+        <div id="pagination-container"></div>
+   </div>
+    <div class="cart-sidebar">
+        <h3>your cart</h3>
+        <div id="cart-container">
+          
+        </div>
+        <div id="cart-total" style="margin: 15px 0; font-weight: bold;">
+            total: $0.00
+        </div>
+
+    
+        <form id="checkout-form">
+            <h4>Order!!!</h4>
+            <input type="text" id="fullname" placeholder="name and surname " required style="width: 100%; margin-bottom: 10px;">
+            <input type="text" id="phone" placeholder="phone" required style="width: 100%; margin-bottom: 10px;">
+            <input type="text" id="address" placeholder="adress" required style="width: 100%; margin-bottom: 10px;">
+            <button type="submit" id="checkout-btn" style="width: 100%;">order</button>
+        </form>
+    </div>
+</div>
 
     </main>
     <script src="js/api.js"></script>

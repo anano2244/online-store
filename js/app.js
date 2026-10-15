@@ -42,12 +42,8 @@ async function renderProducts(productsToRender = null) {
         <p class="stock">stock status: ${product.availabilityStatus}</p>
         <button class="add-to-cart-btn" ${isOutOfStock ? 'disabled' : ''}>${isOutOfStock ? 'out of stock' : ' Add to cart'}</button> `;
         const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
-        if (isOutOfStock) {
-            addToCartBtn.disabled = true;
-            addToCartBtn.textContent = 'out of stock';
-        } else {
         addToCartBtn.addEventListener('click', () => addToCart(product));
-        } 
+        
     shopContainer.appendChild(productCard);
     });
 }
