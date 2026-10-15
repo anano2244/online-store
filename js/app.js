@@ -19,6 +19,9 @@ async function renderProducts(productsToRender = null) {
     const isOutOfStock = product.stock === 0 || product.availabilityStatus === ' Out of stock';
     const productCard = document.createElement('div');
     productCard.classList.add('product-card'); 
+    productCard.addEventListener('click', () => {
+        window.location.href=`product.html?id=${product.id}`;
+    })
      productCard.innerHTML = `
         <img src="${product.thumbnail}" alt="${product.title}">
         <h3>${product.title}</h3>
