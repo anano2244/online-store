@@ -277,3 +277,12 @@ body {
 #category-select:focus {
     border-color: #aeb2b7;
 }
+
+#sort-select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+}

@@ -165,3 +165,30 @@ Format:
 **Type:** other
 **What I did:** Session ended. No work requested.
 **Files changed:** none
+
+### 22 · 2026-10-15 21:53
+**Prompt:**
+> გადახედე სორტირების ფუნქციას ბაგია რაღაც
+**Type:** debug
+**What I did:** Read the sort handler in app.js. Hinted without fixing: on line 120 the closing backtick comes before `/products`, so the line is parsed as a string divided by the variable `products`, which does not exist, so the handler throws ReferenceError ("products is not defined") and no request is ever sent. Asked the student to look at where the backtick closes and to check the console error.
+**Files changed:** none
+
+### 23 · 2026-10-15 21:55
+**Prompt:**
+> პროდუქტის ბოლოს
+**Type:** explain
+**Files changed:** none
+
+### 24 · 2026-10-15 21:59
+**Prompt:**
+> უბრალოდ კითხვის ნიშანზე წავა ანუ პროდუქტებზე ანუ ტავდაპირველ მნიშვნელობას მიიღებს
+**Type:** explain
+**What I did:** Student answered the check question. Confirmed the answer: since `url` has no `?` yet, `?sortBy=price&order=asc` is appended, giving `https://dummyjson.com/products?sortBy=price&order=asc` — the normal product list sorted by price ascending. No code written.
+**Files changed:** none
+
+### 25 · 2026-10-15 22:00
+**Prompt:**
+> exit
+**Type:** other
+**What I did:** Session ended. No work requested.
+**Files changed:** none

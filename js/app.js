@@ -117,7 +117,7 @@ if (sortSelect) {
         const selectedCategory = categorySelect.value;
         const searchQuery = searchInput ? searchInput.value.trim() : '';
         
-        let url = `${BASE_URL}`/products;
+        let url = `${BASE_URL}/product`;
         
         if (searchQuery) {
             url = `${BASE_URL}/products/search?q=${searchQuery}`;
