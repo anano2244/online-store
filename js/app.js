@@ -5,9 +5,10 @@ async function renderProducts(productsToRender = null) {
     let products = productsToRender;
     
     if (!products) {
-        const skip = (currentPage -1);
-        const data = await fetchProducts(12, 0);
+        const skip = (--currentPage) * limit;
+        const data = await fetchProducts(limit, skip);
         products = data.products;
+        renderPagination (data.total);
     }
 
     if (!products || products.length === 0) {
@@ -144,5 +145,39 @@ if (sortSelect) {
             console.error('Sorting error:', error);
         }
     });
+}
+
+const paginationContainer = document.querySelector('#pagination-container');
+
+function renderPagination(totalProducts) {
+    paginationContainer.innerHTML = ''; 
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    if (currentPage > 1) {
+        const prevButton = document.createElement('button');
+        prevButton.textContent = '◀';
+        prevButton.addEventListener('click', async () => {
+            currentPage--;
+            const skip = (currentPage - 1) * limit;
+            const data = await fetchProducts(limit, skip);
+            await renderProducts(data.products); 
+            renderPagination(totalProducts);
+        });
+        paginationContainer.appendChild(prevButton);
+    }
+
+    
+    if (currentPage < totalPages) {
+        const nextButton = document.createElement('button');
+        nextButton.textContent = '▶';
+        nextButton.addEventListener('click', async () => {
+            currentPage++;
+            const skip = (currentPage - 1) * limit;
+            const data = await fetchProducts(limit, skip);
+            await renderProducts(data.products);
+            renderPagination(totalProducts);
+        });
+        paginationContainer.appendChild(nextButton);
+    }
 }
 document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); });
