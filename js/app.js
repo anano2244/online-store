@@ -1,8 +1,11 @@
 const shopContainer = document.querySelector('#shop-container');
+let currentPage =1;
+const limit = 12;
 async function renderProducts(productsToRender = null) {
     let products = productsToRender;
     
     if (!products) {
+        const skip = (currentPage -1);
         const data = await fetchProducts(12, 0);
         products = data.products;
     }
