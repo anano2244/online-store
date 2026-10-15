@@ -286,3 +286,29 @@ body {
     font-size: 15px;
     cursor: pointer;
 }
+#pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+#pagination-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #ffffff;
+    color: #1f2937;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+#pagination-container button:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+}
