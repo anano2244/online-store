@@ -59,7 +59,7 @@ if (searchInput) {
 
 
 async function loadCategories() {
-    console.log('loadCategories ფუნქცია გაეშვა!'); // ამას ვამოწმებთ
+    console.log('loadCategories works!'); 
     try {
         const res = await fetch('https://dummyjson.com/products/categories');
         const categories = await res.json();
@@ -77,7 +77,7 @@ async function loadCategories() {
                 select.appendChild(option);
             });
         } else {
-            console.log('ვერ მოიძებნა category-select ელემენტი!');
+            console.log('cant find category-select !');
         }
     } catch (err) {
         console.error('couldn\'t load categories:', err);
@@ -109,5 +109,37 @@ if (categorySelect) {
         }
     }
 
+const sortSelect = document.getElementById('sort-select');
 
+if (sortSelect) {
+    sortSelect.addEventListener('change', async (event) => {
+        const sortValue = event.target.value;
+        const selectedCategory = categorySelect.value;
+        const searchQuery = searchInput ? searchInput.value.trim() : '';
+        
+        let url = `${BASE_URL}`/products;
+        
+        if (searchQuery) {
+            url = `${BASE_URL}/products/search?q=${searchQuery}`;
+        } else if (selectedCategory) {
+            url = `${BASE_URL}/products/category/${selectedCategory}`;
+        }
+        
+        if (sortValue === 'price-asc') {
+            url += (url.includes('?') ? '&' : '?') + 'sortBy=price&order=asc';
+        } else if (sortValue === 'price-desc') {
+            url += (url.includes('?') ? '&' : '?') + 'sortBy=price&order=desc';
+        } else if (sortValue === 'rating') {
+            url += (url.includes('?') ? '&' : '?') + 'sortBy=rating&order=desc';
+        }
+        
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            renderProducts(data.products);
+        } catch (error) {
+            console.error('Sorting error:', error);
+        }
+    });
+}
 document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); });
