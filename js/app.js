@@ -1,5 +1,5 @@
 const shopContainer = document.querySelector('#shop-container');
-let currentPage =1;
+let currentPage = 1;
 const limit = 12;
 async function renderProducts(productsToRender = null) {
     let products = productsToRender;
