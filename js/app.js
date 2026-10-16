@@ -180,4 +180,63 @@ function renderPagination(totalProducts) {
         paginationContainer.appendChild(nextButton);
     }
 }
+const checkoutForm = document.querySelector('#checkout-form');
+
+if (checkoutForm) {
+    checkoutForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // 1. Check if the cart is empty
+        if (cart.length === 0) {
+            console.warn('Cart is empty!');
+            return;
+        }
+
+        // 2. Retrieve values from form fields
+        const fullname = document.querySelector('#fullname').value.trim();
+        const phone = document.querySelector('#phone').value.trim();
+        const address = document.querySelector('#address').value.trim();
+
+        // 3. Simple validation
+        const phoneRegex = /^\d+$/;
+        if (!phoneRegex.test(phone)) {
+            console.error('Invalid phone number format');
+            return;
+        }
+
+        // 4. Construct order data object
+        const orderData = {
+            cart: cart,
+            customer: {
+                fullname,
+                phone,
+                address
+            }
+        };
+
+        try {
+            const response = await fetch('https://your-api-endpoint.com/carts/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            if (response.ok) {
+                // Clear cart and reset form
+                cart = [];
+                renderCart();
+                checkoutForm.reset();
+                
+                console.log('Order successfully placed!');
+                // You can show a success message element in HTML here if needed
+            } else {
+                console.error('Failed to submit the order.');
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+        }
+    });
+}
 document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); });

@@ -23,6 +23,7 @@ if (productId) {
                     <p class="shipping">Shipping Information: ${product.shippingInformation || 'No information available'}</p>
                     <p class="rating-widget">Rating: ${product.rating} / 5</p>
                     <p class="description">${product.description}</p>
+                    <button id="add-to-cart-btn">Add to Cart</button>
                 </div>
             </div>
 
@@ -40,5 +41,8 @@ if (productId) {
                 }
             </div>
         `;
+
+        const addToCartBtn = container.querySelector('#add-to-cart-btn');
+        addToCartBtn.addEventListener('click', () => addToCart(product));
     });
 }

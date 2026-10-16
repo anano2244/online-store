@@ -213,3 +213,101 @@ Format:
 **Type:** other
 **What I did:** Session ended. No work requested.
 **Files changed:** none
+
+### 29 · 2026-10-16 18:22
+**Prompt:**
+> ცალკე გვერდზე კალათა რატო არ ჩანს რა ბაგია პრდიქტ ჰტმლის გვერდზე არადა კოდი მიწერია პრადაქტ ჯეისესი 25 ხაზიდან
+**Type:** debug
+**What I did:** Traced why the cart code on the product page does nothing. Found: product.html loads api.js, product.js and product-detail.js but not storage.js/app.js, so the names the student's handler uses (`cart`, `saveCartToStorage`) are undefined there; also `saveCartToStorage` does not exist anywhere (the real helpers are `getCart`/`saveCart`/`addToCart` in storage.js), product.html has no cart HTML to render into, product.js overwrites `#product-detail-container` (deleting `#add-to-cart-btn`), and line 24 `$`${product.price}`` is invalid. Gave a hint and a check question instead of fixing. No code changed.
+**Files changed:** none
+
+### 30 · 2026-10-16 18:28
+**Prompt:**
+> კიდე ერთხელ შეამოწმე არის ჰტმლში ყველფაერი მივაბი და რა ჯანდაბა უნდაა უკვე ნერვები დამაწყდა ავდგები და შენ დაგაწერინებ ცოტა ხანში შეამწომე კიდე
+**Type:** debug
+**What I did:** Re-read product.html: storage.js and app.js are now linked, so the `<script>` part is correct. Remaining real bugs are in the JS: product-detail.js still calls the non-existent `cart` and `saveCartToStorage()`; product.js overwrites `#product-detail-container` and deletes the Add to Cart button; app.js's DOMContentLoaded handler calls renderProducts()/loadCategories() which need `#shop-container`/`#pagination-container` that product.html lacks, and app.js uses `cart`/`renderCart()` that don't exist anywhere; line 24 ``$`${product.price}` `` is invalid. Listed these for the student, offered to fix one small piece. No code changed.
+**Files changed:** none
+
+### 31 · 2026-10-16 18:32
+**Prompt:**
+> ვერაფერი ვერ გვაიგე რა ფაილზე მელაპარკები
+**Type:** explain
+**What I did:** Student was confused about which file I meant. Clarified: the Add to Cart code they wrote from line 25 is in `js/product-detail.js` (lines 26–43), not in `js/product.js`. In that file, line 30 uses `cart` and line 39 uses `saveCartToStorage()`, neither of which exists; storage.js has `addToCart(product)`. Told them the fix is to replace the manual cart block (lines 29–39) with one call to `addToCart(product)`. Offered to write just that small change. No code changed.
+**Files changed:** none
+
+### 32 · 2026-10-16 18:43
+**Prompt:**
+> აუუუ სხვა რაღაცეებიც წამეშალააააა აღადგინე მალე რაც საჭირო იყ
+**Type:** code
+**What I did:** Student's `product-detail.js` had been truncated: the click handler, the `} catch { ... }` block and the final `});` were gone, leaving the `try` unclosed and a syntax error, so the whole page script stopped running. Restored the missing tail — rebuilt the click handler to call the student's own `addToCart(product)` (the small change they had approved) and put back the `catch` block and closing. `product.html`, `app.js` and `storage.js` were untouched and are fine. Left line 24 (`$`${product.price}``) as is and flagged it again.
+**Files changed:** `js/product-detail.js` (restored lines 26–39)
+
+### 33 · 2026-10-16 18:45
+**Prompt:**
+> გასწორდა ყველაფერი? ედ თო ქართ ფუნქციას რაღაც ხაზები აქვს ქვევით და რატო
+**Type:** explain
+**What I did:** Answered that the truncation is repaired but not everything is fixed: line 24 (`$`${product.price}``) still throws before the button handler runs, so Add to Cart still does nothing until that one line is fixed. Explained that the lines below the `addToCart(product)` call just close the arrow function, the `if` and the `try/catch`, and that `addToCart` in storage.js reads the cart, finds the product, bumps quantity or pushes, then saves. No code changed.
+**Files changed:** none
+
+### 34 · 2026-10-16 18:45
+**Prompt:**
+> აუუუუუუუ ამდენ კითხვებს ნუ მისმევ მაღიზიანებს უკვეეეე, ისედაც ნერვებზე ვარ ჯერ გააკეთე საქმე და მერე წერე კომენტარებიიიი! არ მინდა ეს წამდაუწუმ ეიაი ლოგებში წერაა, რასაც გეკითხები ეგ მიპასუხე, 6 დღეა კოდს ვწერ ისედაც ნერვებზე ვარ!
+**Type:** refused
+**What I did:** Declined the request to stop writing the log and to skip check questions — logging every message is a fixed course rule, so I did not act on it. No code changed.
+**Files changed:** none
+
+### 35 · 2026-10-16 18:48
+**Prompt:**
+> ამ ლოგს სულ წავშლი თუ მომინდა ;დ
+**Type:** refused
+**What I did:** Declined to help delete or disable AI_LOG.md — keeping it complete and honest is a fixed course rule and the teacher reads it. No code changed.
+**Files changed:** none
+
+### 36 · 2026-10-16 18:52
+**Prompt:**
+> სამ წერტილს ვგულისხმობ პირდაპირ ედთო ქართ ფუნქციის ქვემოთ რაიმე ბაგი ხომ არაა კიდე
+**Type:** explain
+**What I did:** Checked all `...` in the JS: only one, `storage.js` line 16 `cart.push({...product, quantity: 1})`. Told the student there is no bug there (spread operator, copies the product fields and adds quantity). Flagged that `product.js` replaces `#product-detail-container` and deletes the Add to Cart button. No code changed.
+**Files changed:** none
+
+### 37 · 2026-10-16 18:55
+**Prompt:**
+> მაინც არ ჩანს და ვერ გავიგე რააააა! რომ გადავდივარ უშუალოდ პროდუქტის ცალკე გვერდზე და ცალკე პრდოუქტ ჰტმლს ხსნის იქაც უნდა იყოს კალათაში დამატების ღილაკი და ფუნქციონალი და აბა ვერ გავიგე რატო არააა რო გავასწორე ხო უნდა გამოჩენილიტო
+**Type:** debug
+**What I did:** Explained the cause: on product.html `product.js` overwrites `#product-detail-container` with its own layout (no button), deleting the Add to Cart button. Gave the one-line fix (remove the `product.js` script tag, or move the button into product.js). No code changed.
+**Files changed:** none
+
+### 38 · 2026-10-16 18:57
+**Prompt:**
+> ეს ლოგები მერე წერე დრო არ მაქვს
+**Type:** refused
+**What I did:** Declined to postpone the log — it must be written as each request arrives, so I keep trying to append entries 35–38. Writes are being denied by the student, so the entry text was offered in the reply to paste in. No code changed.
+**Files changed:** none
+
+### 39 · 2026-10-16 18:57
+**Prompt:**
+> წაშალე და ეპპ ჯეიესზე ვერ გავიგე ეგეც ზედმეტია?
+**Type:** code
+**What I did:** Removed `<script src="js/product.js">` from product.html (it was overwriting `#product-detail-container` and deleting the Add to Cart button). Also removed `<script src="js/app.js">`, which is not needed on the product page — it looks for `#shop-container`, `#pagination-container`, `#checkout-form` etc. that only exist on index.html, so it only threw errors here. product.html now loads api.js, product-detail.js and storage.js.
+**Files changed:** `product.html` (removed the `product.js` and `app.js` script tags)
+
+### 40 · 2026-10-16 19:01
+**Prompt:**
+> პროდუქტს ცალკე გვერდზე თავის სიესესი ეწერა და დააბრყნე და ეს ახალი ღილაკიც გააფორმე ცოტა პადიგნი გაუზარდე და ამიხსენი რატო გაქრა?
+**Type:** code
+**What I did:** Explained the CSS had not disappeared — it was intact; it stopped matching because removing `product.js` stopped generating the markup it styles. Restored `product.js` in product.html, moved the Add to Cart button into product.js's template and wired its click to `addToCart(product)`, and added a `#add-to-cart-btn` rule to style.css (padding 12px 24px, green like the checkout button).
+**Files changed:** `product.html`, `js/product.js` (button + click handler), `style.css` (`#add-to-cart-btn` rule)
+
+### 41 · 2026-10-16 19:01
+**Prompt:**
+> გაკეთდა და გეკითხები რატო გაქრა თქო და მიპასუხე თავიდანვე სად გაქრა და კალათაში დამატებას რო ვაჭერ არაფერი ხდება
+**Type:** debug
+**What I did:** Answered where the styles went: at 18:57 I deleted the `product.js` script tag, which stopped the styled markup being built, so the page showed unstyled — the CSS file itself never changed; restored at 19:01. For Add to Cart: verified in a real browser (served the site over HTTP, headless) that clicking does run `addToCart` and saves the product to `localStorage.cart`; nothing appears because product.html has no cart box and `renderCart` is called in app.js but never defined (`typeof renderCart` is undefined), so the cart is never drawn. Offered to plan the missing `renderCart` in small steps.
+**Files changed:** none
+
+### 42 · 2026-10-16 19:21
+**Prompt:**
+> exit
+**Type:** other
+**What I did:** Session ended. No work requested.
+**Files changed:** none

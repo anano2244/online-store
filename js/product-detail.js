@@ -21,8 +21,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (titleEl) titleEl.textContent = product.title;
         if (descEl) descEl.textContent = product.description;
-        if (priceEl) priceEl.textContent = $`${product.price}`;
+        if (priceEl) priceEl.textContent = product.price;
         if (imgEl) imgEl.src = product.thumbnail;
+
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', () => {
+                addToCart(product);
+            });
+        }
 
     } catch (error) {
         console.error("couldn't load", error);
