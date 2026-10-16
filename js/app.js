@@ -173,8 +173,9 @@ function renderPagination(totalProducts) {
     }
 }
 const phoneInput = document.querySelector('#phone');
+
 if (phoneInput) {
-    phoneInput.addEventListener('input', async (e) => {
+    phoneInput.addEventListener('input', (e) => {
         const phoneValue = e.target.value.trim();
         const phoneRegex = /^\d+$/;
         
@@ -190,58 +191,81 @@ if (phoneInput) {
         if (phoneValue !== '' && !phoneRegex.test(phoneValue)) {
             errorMsg.textContent = 'Please enter only digits for the phone number!';
         } else {
-        errorMsg.textContent = '';
-        
-        const submitBtn = checkoutForm.querySelector('button[type="submit"]');
-        if (submitBtn) {
-            submitBtn.disabled = true;
+            errorMsg.textContent = '';
+        }
+    });
+}
+
+// ფორმა
+const checkoutForm = document.querySelector('#checkout-form');
+
+if (checkoutForm) {
+    checkoutForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const phone = phoneInput ? phoneInput.value.trim() : '';
+        let errorMsg = document.querySelector('#form-error-msg');
+        if (!errorMsg) {
+            errorMsg = document.createElement('div');
+            errorMsg.id = 'form-error-msg';
+            errorMsg.style.color = 'red';
+            errorMsg.style.margin = '10px 0';
+            phoneInput.parentNode.insertBefore(errorMsg, phoneInput);
         }
 
-        const orderData = {
-            userId: 1,
-            products: currentCart.map(item => ({
-                id: item.id,
-                quantity: item.quantity || 1
-            }))
-        };
+        if (phone === '' || !/^\d+$/.test(phone)) {
+            errorMsg.textContent = 'Please enter only digits for the phone number!';
+            return;
+        }
+        errorMsg.textContent = '';
+
+        const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+        const submitBtn = checkoutForm.querySelector('button[type="submit"]');
 
         try {
+            if (submitBtn) submitBtn.disabled = true;
+
+            // ზუსტად ითხოვს: მხოლოდ id და quantity
+            const orderData = {
+                userId: 1,
+                products: currentCart.map(item => ({
+                    id: item.id,
+                    quantity: item.quantity
+                }))
+            };
+
             const response = await fetch(`${BASE_URL}/carts/add`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData)
             });
 
-            if (response.ok) {
-                const result = await response.json();
-                
-                let successMsg = document.querySelector('#form-success-msg');
-                if (!successMsg) {
-                    successMsg = document.createElement('div');
-                    successMsg.id = 'form-success-msg';
-                    successMsg.style.color = 'green';
-                    successMsg.style.fontWeight = 'bold';
-                    successMsg.style.margin = '10px 0';
-                    checkoutForm.prepend(successMsg);
-                }
-                
-                successMsg.textContent = `Order successfully placed! Order ID: ${result.id}`;
+            const result = await response.json();
 
+            if (response.ok) {
                 localStorage.removeItem('cart');
                 checkoutForm.reset();
+
+                // შედეგის გამოჩენა გვერდზე (UI-ში) დივის მეშვეობით
+                let successMsg = document.querySelector('#order-success-msg');
+                if (!successMsg) {
+                    successMsg = document.createElement('div');
+                    successMsg.id = 'order-success-msg';
+                    successMsg.style.color = 'green';
+                    successMsg.style.margin = '10px 0';
+                    checkoutForm.parentNode.insertBefore(successMsg, checkoutForm);
+                }
+                successMsg.textContent = `Order placed successfully! Order ID: ${result.id}`;
             } else {
-                errorMsg.textContent = 'Failed to place order. Please try again.';
+                console.error('Failed to place order.');
             }
+
         } catch (error) {
-            console.error('Error:', error);
-            errorMsg.textContent = 'An error occurred. Please check your connection.';
+            console.error('Error submitting order:', error);
         } finally {
-            if (submitBtn) {
-                submitBtn.disabled = false;
-            }
+            if (submitBtn) submitBtn.disabled = false;
         }
-    } // ეს ხურავს else-ს
-  }); // ეს ხურავს async (e) => {} ევენტ ლისენერს
-} // ეს ხურავს თავიდან დაწყებულ if (checkoutForm) -ს
+    });
+}
 
 document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); });

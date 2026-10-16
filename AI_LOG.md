@@ -395,3 +395,94 @@ Format:
 **Type:** other
 **What I did:** Student will write D4 and E themselves and call me when they want a check. Waiting for their code; no review done yet.
 **Files changed:** none
+
+### 55 · 2026-10-16 22:58
+**Prompt:**
+> იმხელა კოდი მიწერია უკვე თვალებიდან ვეღარ ვიყურები და ვერც ტვინი მუშაობს, სად წავიდა ის ფუნქცია კალათის გამოსაჩენად რო დავწერე ლოგიკის გარეშე ვეღარ ვპოულობ
+**Type:** debug
+**What I did:** Searched the whole project and the git history for the cart display function. `renderCart` is never defined in any `.js` file in any commit — it only exists as a call: `renderCart();` in old `js/app.js` (bdc7944 line 229; fa77068 lines 279-281). Told the student the function was never actually written, only called. No code changed.
+**Files changed:** none
+
+### 56 · 2026-10-16 23:12
+**Prompt:**
+> რენდერ ქართს ვეძებ
+**Type:** other
+**What I did:** Confirmed again that `renderCart` has no definition anywhere; only the call and AI_LOG.md mentions of it exist. No code changed.
+**Files changed:** none
+
+### 57 · 2026-10-16 23:16
+**Prompt:**
+> ამ ფაილში სად წერია რომელ ხაზზეა ნახსსნები ხოდა
+**Type:** explain
+**What I did:** Gave the exact lines: `renderCart` appears only in `AI_LOG.md` (lines 228, 305, 347, 361, 368, 375, 382) and in old `js/app.js` versions (bdc7944:229, fa77068:279-281). It is not in the current `app.js`. Also flagged that the current `app.js` is broken: the checkout `submit` handler got merged into the phone `input` listener, so `checkoutForm` and `currentCart` are used without being declared. No code changed.
+**Files changed:** none
+
+### 58 · 2026-10-16 23:20
+**Prompt:**
+> აუუუუუუ უბრალოდ ფაილი წაიკითხე და იპოვნე მსგავსი სიტყვა და მორჩააა მომწერე რომელ ხაზზეა და ვსოო მარტივად
+**Type:** explain
+**What I did:** Read `js/app.js` and searched it for `cart`/`render`. `renderCart` is not in the file. The cart-related lines are 40, 41, 42 (Add to Cart button), 202 (`currentCart`), 209 (`carts/add`), 230 (`localStorage.removeItem('cart')`); the `render...` functions are `renderProducts` (line 4) and `renderPagination` (line 145). Listed them for the student. No code changed.
+**Files changed:** none
+
+### 59 · 2026-10-16 23:21
+**Prompt:**
+> ხოდა სად წერია ეგ რენდექართი რომელ ხაზზეეეეეეე აქამდე მეც წავიკითხავდიიი
+**Type:** explain
+**What I did:** Searched every file in the repo (including hidden/gitignored) for `render`, `cart` and `renderCart`. Confirmed `renderCart` is defined nowhere in the code — the word appears only in `AI_LOG.md`. The only render functions are `renderProducts` (app.js:4) and `renderPagination` (app.js:145). The old call sites were fa77068:279-281 and bdc7944:229. Told the student plainly it is not written anywhere. No code changed.
+**Files changed:** none
+
+### 60 · 2026-10-16 23:25
+**Prompt:**
+> ვერ გავიგე ან შენ ვერ გაიგე მე გეკითხები სად ანუ რომელ ხაზზე წერია რენდერქართ სიტყვა მეთქი თორე ვიცი რო ფუნქცია ასაწყობი მაქვს
+**Type:** explain
+**What I did:** The student only wanted the line numbers of the word `renderCart`. Answered: it is written only in `AI_LOG.md`, on lines 228, 305, 347, 361, 368, 375, 382, 403, 410, 417, 424, 431; nowhere in any `.js` file. The old call was `js/app.js` fa77068:279-281 and bdc7944:229. No code changed.
+**Files changed:** none
+
+### 61 · 2026-10-16 23:26
+**Prompt:**
+> ეხლა მითხარი სადაა კოდი დაზიანებული ვერ ვხვდები მე ბაგს რა ჩექაუთ ფორმატი გაიპარა
+**Type:** debug
+**What I did:** Pointed to the broken lines in `js/app.js`: the checkout order code (lines 195-242) now sits inside the phone `input` listener's `else` (line 192), under `phoneInput.addEventListener('input', ...)` (line 177). The `const checkoutForm = document.querySelector('#checkout-form');` + `if (checkoutForm) { checkoutForm.addEventListener('submit', async (e) => { e.preventDefault(); ...` header and `let currentCart = JSON.parse(localStorage.getItem('cart')) || [];` were lost, so `checkoutForm` and `currentCart` are used without being declared. Explained the correct structure and left the fix to the student. No code changed.
+**Files changed:** none
+
+### 62 · 2026-10-16 23:35
+**Prompt:**
+> აბა გადახედე ცვლილებებს 175 ხაზიდან გადავასწორე კოდი
+**Type:** review
+**What I did:** Reviewed `js/app.js` from line 175. Structure is now correct: phone `input` listener (175-197) and checkout `submit` listener (200-218) are two separate blocks, `checkoutForm` is declared, `e.preventDefault()` is there and the button is disabled during the request. But the order POST is gone — `orderData`, `fetch(${BASE_URL}/carts/add)`, the success message with `result.id` and `localStorage.removeItem('cart')` are missing, so submitting now sends nothing; `currentCart` (line 207) is declared but unused. `node --check js/app.js` passes. Left the fix to the student. No code changed.
+**Files changed:** none
+
+### 63 · 2026-10-16 23:44
+**Prompt:**
+> ეხლაააააა გასწორდააა ისე რო აკმაყოფილებს დავალების პუნქტს თუ არაააა
+**Type:** review
+**What I did:** Checked `js/app.js` against rubric D3/D4. D3 is met: the form sends `POST ${BASE_URL}/carts/add` with a JSON body, the `Content-Type` header and an `response.ok` check (lines 218-226). D4 is not met: the server's reply is only `console.log`-ed (line 227), not shown on the page, so it misses "shows data that came back" (form reset and button disabling are done). Also the submit handler no longer validates the phone, so an invalid phone would still be sent (D2 risk). Could not verify the `products: currentCart` shape because the test command was denied. No code changed.
+**Files changed:** none
+
+### 64 · 2026-10-16 23:49
+**Prompt:**
+> ეხლააააა?????
+**Type:** review
+**What I did:** Re-reviewed the checkout handler. D3 and D4 are now both met: `orderData` maps to `{ id, quantity }` (lines 213-219), the POST goes to `${BASE_URL}/carts/add` with `response.ok`, and on success it removes the cart, resets the form and shows `Order placed successfully! Order ID: ${result.id}` in a `#order-success-msg` div on the page (lines 229-242); the button is disabled during the request. `node --check js/app.js` passes. Only remaining note: the submit handler still does not validate the phone (D2 risk). No code changed.
+**Files changed:** none
+
+### 65 · 2026-10-16 23:54
+**Prompt:**
+> ეხლა ტელეფონის ჩექაუთი გავასწორე აბა ნახე ეხლა თუ გასწორდება ციფრების შემოწმება
+**Type:** review
+**What I did:** Reviewed the new lines 198-199. The `return` is at the top level of the script, outside any function, so a browser classic `<script>` throws `SyntaxError: Illegal return statement` and all of `app.js` stops running (node --check passes only because Node wraps files as CommonJS — it is not a browser test). Also the check runs once at page load instead of on submit, and reads the phone value once. Told the student the check belongs inside the `submit` listener right after `e.preventDefault()`. No code changed.
+**Files changed:** none
+
+### 66 · 2026-10-16 23:56
+**Prompt:**
+> კაი ეგ მარტივია და შენც შეგიძლია გადაასწორო კოდი მაინც ჩემი დაწერილია უბრალოდ გაასწორე ადგილის მხრივ ბევრი რომ აღარ ვიწვალო მიდი
+**Type:** code
+**What I did:** Moved the student's own phone check into the right place. Removed the top-level `const phoneValue ...; if (...) return;` (old lines 198-199) and put the check inside the `submit` listener right after `e.preventDefault()`: it reads the phone, shows `#form-error-msg` and `return`s before sending when the phone is empty or not all digits. Fixed the indentation. `node --check js/app.js` passes.
+**Files changed:** `js/app.js` (removed old lines 198-199; added the check inside the submit handler, lines 206-220)
+
+### 67 · 2026-10-16 23:58
+**Prompt:**
+> ზუსტად ეგ რითურნი არ უშვებს ციფრის გარდა არაფერს
+**Type:** explain
+**What I did:** Confirmed the student's answer and sharpened it: the `if` tests the phone and the `return` exits the `submit` handler early, so the lines below (orderData, fetch) never run and nothing is sent. No code changed.
+**Files changed:** none
