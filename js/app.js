@@ -3,19 +3,16 @@ let currentPage = 1;
 const limit = 12;
 async function renderProducts(productsToRender = null) {
     let products = productsToRender;
-    
     if (!products) {
         const skip = (--currentPage) * limit;
         const data = await fetchProducts(limit, skip);
         products = data.products;
         renderPagination (data.total);
     }
-
     if (!products || products.length === 0) {
         shopContainer.innerHTML = '<p class="error-message">products couldn\'t found.</p>';
         return;
     }
-    
     shopContainer.innerHTML = '';
     products.forEach(product => {
     const formattedPrice = product.price.toFixed(2);
@@ -48,7 +45,6 @@ async function renderProducts(productsToRender = null) {
     });
 }
 const searchInput = document.querySelector('#search-input');
-
 if (searchInput) {
     searchInput.addEventListener('input', async (e) => {
         const query = e.target.value.trim();
@@ -60,15 +56,12 @@ if (searchInput) {
         }
     });
 }
-
-
 async function loadCategories() {
     console.log('loadCategories works!'); 
     try {
         const res = await fetch('https://dummyjson.com/products/categories');
         const categories = await res.json();
         const select = document.getElementById('category-select');
-        
         if (select) {
             console.log(categories); 
             categories.forEach(category => {
@@ -166,7 +159,6 @@ function renderPagination(totalProducts) {
         paginationContainer.appendChild(prevButton);
     }
 
-    
     if (currentPage < totalPages) {
         const nextButton = document.createElement('button');
         nextButton.textContent = '▶';
@@ -182,7 +174,7 @@ function renderPagination(totalProducts) {
 }
 const phoneInput = document.querySelector('#phone');
 if (phoneInput) {
-    phoneInput.addEventListener('input', (e) => {
+    phoneInput.addEventListener('input', async (e) => {
         const phoneValue = e.target.value.trim();
         const phoneRegex = /^\d+$/;
         
@@ -198,46 +190,11 @@ if (phoneInput) {
         if (phoneValue !== '' && !phoneRegex.test(phoneValue)) {
             errorMsg.textContent = 'Please enter only digits for the phone number!';
         } else {
-            errorMsg.textContent = '';
-        }
-    });
-}
-
-// 2. Checkout form submission handler
-const checkoutForm = document.querySelector('#checkout-form');
-if (checkoutForm) {
-    checkoutForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        // Retrieve cart safely from localStorage
-        let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+        errorMsg.textContent = '';
         
-        if (currentCart.length === 0) {
-            console.warn('Cart is empty!');
-            return;
-        }
-
-        const fullname = document.querySelector('#fullname').value.trim();
-        const phone = document.querySelector('#phone').value.trim();
-        const email = document.querySelector('#email').value.trim();
-        const address = document.querySelector('#address').value.trim();
-
-        const phoneRegex = /^\d+$/;
-        
-        let errorMsg = document.querySelector('#form-error-msg');
-        if (!errorMsg) {
-            errorMsg = document.createElement('div');
-            errorMsg.id = 'form-error-msg';
-            errorMsg.style.color = 'red';
-            errorMsg.style.margin = '10px 0';
-            checkoutForm.prepend(errorMsg);
-        }
-
-        if (!phoneRegex.test(phone)) {
-            errorMsg.textContent = 'Please enter only digits for the phone number!';
-            return;
-        } else {
-            errorMsg.textContent = '';
+        const submitBtn = checkoutForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
         }
 
         const orderData = {
@@ -246,16 +203,12 @@ if (checkoutForm) {
                 id: item.id,
                 quantity: item.quantity || 1
             }))
-            
-            
         };
 
         try {
             const response = await fetch(`${BASE_URL}/carts/add`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData)
             });
 
@@ -271,24 +224,24 @@ if (checkoutForm) {
                     successMsg.style.margin = '10px 0';
                     checkoutForm.prepend(successMsg);
                 }
+                
                 successMsg.textContent = `Order successfully placed! Order ID: ${result.id}`;
 
-                // Clear cart state safely
                 localStorage.removeItem('cart');
-                
-                // Safe check for renderCart function existence
-                if (typeof renderCart === 'function') {
-                    renderCart();
-                }
-                
                 checkoutForm.reset();
             } else {
-                errorMsg.textContent = 'Failed to submit the order.';
+                errorMsg.textContent = 'Failed to place order. Please try again.';
             }
         } catch (error) {
-            errorMsg.textContent = 'Network error. Please try again later.';
+            console.error('Error:', error);
+            errorMsg.textContent = 'An error occurred. Please check your connection.';
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+            }
         }
-    });
-}
+    } // ეს ხურავს else-ს
+  }); // ეს ხურავს async (e) => {} ევენტ ლისენერს
+} // ეს ხურავს თავიდან დაწყებულ if (checkoutForm) -ს
 
 document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); });
