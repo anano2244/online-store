@@ -180,42 +180,78 @@ function renderPagination(totalProducts) {
         paginationContainer.appendChild(nextButton);
     }
 }
-const checkoutForm = document.querySelector('#checkout-form');
+const phoneInput = document.querySelector('#phone');
+if (phoneInput) {
+    phoneInput.addEventListener('input', (e) => {
+        const phoneValue = e.target.value.trim();
+        const phoneRegex = /^\d+$/;
+        
+        let errorMsg = document.querySelector('#form-error-msg');
+        if (!errorMsg) {
+            errorMsg = document.createElement('div');
+            errorMsg.id = 'form-error-msg';
+            errorMsg.style.color = 'red';
+            errorMsg.style.margin = '10px 0';
+            phoneInput.parentNode.insertBefore(errorMsg, phoneInput);
+        }
 
+        if (phoneValue !== '' && !phoneRegex.test(phoneValue)) {
+            errorMsg.textContent = 'Please enter only digits for the phone number!';
+        } else {
+            errorMsg.textContent = '';
+        }
+    });
+}
+
+// 2. Checkout form submission handler
+const checkoutForm = document.querySelector('#checkout-form');
 if (checkoutForm) {
     checkoutForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // 1. Check if the cart is empty
-        if (cart.length === 0) {
+        // Retrieve cart safely from localStorage
+        let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        if (currentCart.length === 0) {
             console.warn('Cart is empty!');
             return;
         }
 
-        // 2. Retrieve values from form fields
         const fullname = document.querySelector('#fullname').value.trim();
         const phone = document.querySelector('#phone').value.trim();
+        const email = document.querySelector('#email').value.trim();
         const address = document.querySelector('#address').value.trim();
 
-        // 3. Simple validation
         const phoneRegex = /^\d+$/;
-        if (!phoneRegex.test(phone)) {
-            console.error('Invalid phone number format');
-            return;
+        
+        let errorMsg = document.querySelector('#form-error-msg');
+        if (!errorMsg) {
+            errorMsg = document.createElement('div');
+            errorMsg.id = 'form-error-msg';
+            errorMsg.style.color = 'red';
+            errorMsg.style.margin = '10px 0';
+            checkoutForm.prepend(errorMsg);
         }
 
-        // 4. Construct order data object
+        if (!phoneRegex.test(phone)) {
+            errorMsg.textContent = 'Please enter only digits for the phone number!';
+            return;
+        } else {
+            errorMsg.textContent = '';
+        }
+
         const orderData = {
-            cart: cart,
-            customer: {
-                fullname,
-                phone,
-                address
-            }
+            userId: 1,
+            products: currentCart.map(item => ({
+                id: item.id,
+                quantity: item.quantity || 1
+            }))
+            
+            
         };
 
         try {
-            const response = await fetch('https://your-api-endpoint.com/carts/add', {
+            const response = await fetch(`${BASE_URL}/carts/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -224,19 +260,35 @@ if (checkoutForm) {
             });
 
             if (response.ok) {
-                // Clear cart and reset form
-                cart = [];
-                renderCart();
-                checkoutForm.reset();
+                const result = await response.json();
                 
-                console.log('Order successfully placed!');
-                // You can show a success message element in HTML here if needed
+                let successMsg = document.querySelector('#form-success-msg');
+                if (!successMsg) {
+                    successMsg = document.createElement('div');
+                    successMsg.id = 'form-success-msg';
+                    successMsg.style.color = 'green';
+                    successMsg.style.fontWeight = 'bold';
+                    successMsg.style.margin = '10px 0';
+                    checkoutForm.prepend(successMsg);
+                }
+                successMsg.textContent = `Order successfully placed! Order ID: ${result.id}`;
+
+                // Clear cart state safely
+                localStorage.removeItem('cart');
+                
+                // Safe check for renderCart function existence
+                if (typeof renderCart === 'function') {
+                    renderCart();
+                }
+                
+                checkoutForm.reset();
             } else {
-                console.error('Failed to submit the order.');
+                errorMsg.textContent = 'Failed to submit the order.';
             }
         } catch (error) {
-            console.error('Network error:', error);
+            errorMsg.textContent = 'Network error. Please try again later.';
         }
     });
 }
+
 document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); });

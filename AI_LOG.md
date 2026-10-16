@@ -311,3 +311,66 @@ Format:
 **Type:** other
 **What I did:** Session ended. No work requested.
 **Files changed:** none
+
+### 43 · 2026-10-16 20:18
+**Prompt:**
+> ტელეფონის ინფუთი ძალიან ნერვებს მიშლის, წესით სწორად დავწერე ფორმაც და რექუაიერიც და როცა შესამოწმებლად ვწერ ასოებს რეაგირება არ აქვს და თან დამატების ღილაკიც არაფერს შვება ნახე და გადაამოწმე და იპოვნე ბაგი
+**Type:** debug
+**What I did:** Found the bug: `cart` is never declared in app.js (it is only a local `const` inside storage.js's functions), so the checkout `submit` handler crashes on its first line `if (cart.length === 0)` with ReferenceError. That is why the order button does nothing and why the phone regex check further down is never reached. Also noted the phone regex only runs on submit, so typing letters gives no live feedback. Gave a hint and left the fix to the student.
+**Files changed:** none
+
+### 44 · 2026-10-16 20:29
+**Prompt:**
+> ეხლა დავწერ და შევამოწმოთ ერტად
+**Type:** other
+**What I did:** Student said they will write the fix themselves and we check together. Waiting for their code before reviewing.
+**Files changed:** none
+
+### 45 · 2026-10-16 20:30
+**Prompt:**
+> აბა ეხლა ნახე
+**Type:** review
+**What I did:** Reviewed the student's edit to app.js. The `cart` bug is fixed (`let currentCart = JSON.parse(localStorage.getItem('cart')) || []`), so the order button no longer crashes and the phone regex now runs on submit. Noted the phone still gives no live feedback while typing because no `input` listener was added on `#phone`.
+**Files changed:** none
+
+### 46 · 2026-10-16 20:45
+**Prompt:**
+> აბა ეხლა შეამწომე
+**Type:** review
+**What I did:** Checked the new phone `input` listener (lines 183-204) — it is correct. But found a breaking syntax error: the backticks around two template strings were removed (line 254 `fetch(${BASE_URL}/carts/add, {` and line 274 `successMsg.textContent = Order successfully placed! ...`). Verified with `node --check js/app.js`, which fails with "missing ) after argument list", so the whole script never runs. Pointed the student at the broken lines and left the fix to them.
+**Files changed:** none
+
+### 47 · 2026-10-16 20:49
+**Prompt:**
+> ბექთიქი დამავიწყდა და ჩავსვი ეხლა გაადახედე გასწორდა?
+**Type:** review
+**What I did:** Confirmed the backticks are restored on lines 254 and 274; `node --check` now passes for app.js and for the other four js files. The syntax error is fixed, so the phone live validation, phone regex on submit and the order button should all work. Told the student to test with Live Server; `renderCart` is still missing so the cart sidebar will not refresh after an order.
+**Files changed:** none
+
+### 48 · 2026-10-16 20:54
+**Prompt:**
+> არ გაიგზავნა 400 დააბრუნა
+**Type:** debug
+**What I did:** Explained the 400. dummyjson's POST /carts/add requires a body with `userId` and a `products` array of `{id, quantity}`; the student sends `{cart, customer}` instead. Verified by sending both shapes to the live endpoint: the student's body returns 400 "User id is required", the docs shape returns 201. Pointed the student to the "Add a new cart" docs section and gave a hint to reshape the body, leaving the change to them.
+**Files changed:** none
+
+### 49 · 2026-10-16 21:05
+**Prompt:**
+> ეხლა სწორიააააააააა????
+**Type:** review
+**What I did:** Confirmed the reshaped `orderData` (`userId: 1` and `products: currentCart.map(item => ({ id, quantity }))`) matches what dummyjson expects and returns 201. `node --check js/app.js` passes. Told the student to test end-to-end with Live Server (add an item to the cart first); `renderCart` is still the remaining missing piece.
+**Files changed:** none
+
+### 50 · 2026-10-16 21:09
+**Prompt:**
+> მოიცა ერთი პრობლემააა, იმდენი კოდი ვწერე აღარც მახსოვს სადმე თუ მიწერია ცალკე გვერდზე რო გაიხსნება პროდუქტი და იქ დავაჭერ ღილაკს კალათაში დამატებას რო უნდა გახსნას კალათა მემგონი არ დამიწერია აღარც მახსოვს ნახე არ შვება ისე
+**Type:** debug
+**What I did:** Explained why the product page button looks dead: product.html loads storage.js so `addToCart(product)` does run and saves to localStorage, but the page has no cart box (only index.html has `#cart-container`), no confirmation message, and `renderCart` is never defined — so nothing is shown. Confirmed by searching the project: `#cart-container` exists only in index.html. Offered to plan a small visible result and asked the student to describe what they want.
+**Files changed:** none
+
+### 51 · 2026-10-16 21:12
+**Prompt:**
+> ვერ ვხვდები რა ფუნქციიის არ არსებობაზე მელაპარკები არ მახსოვს
+**Type:** explain
+**What I did:** Pointed to the exact place: app.js line 281 calls `renderCart()` but no `function renderCart()` is defined anywhere, so the cart box is never filled. Explained the `if (typeof renderCart === 'function')` guard is why it does not crash. No code changed.
+**Files changed:** none
