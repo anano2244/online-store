@@ -39,7 +39,11 @@ async function renderProducts(productsToRender = null) {
         <p class="stock">stock status: ${product.availabilityStatus}</p>
         <button class="add-to-cart-btn" ${isOutOfStock ? 'disabled' : ''}>${isOutOfStock ? 'out of stock' : ' Add to cart'}</button> `;
         const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
-        addToCartBtn.addEventListener('click', () => addToCart(product));
+        addToCartBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            addToCart(product);
+            renderCart();
+        });
         
     shopContainer.appendChild(productCard);
     });
@@ -267,5 +271,120 @@ if (checkoutForm) {
         }
     });
 }
+function renderCart() {
+    const cartContainer = document.querySelector('#cart-container'); // კალათის კონტეინერი
+    const cartTotalElem = document.querySelector('#cart-total'); // საერთო ჯამის ელემენტი
+    const cartCountBadge = document.querySelector('.cart-count-badge'); // ჰედერში რაოდენობის ბეჯი
+    
+    const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    if (!cartContainer) return;
 
-document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); });
+    // A5 პუნქტი: თუ კალათა ცარიელია
+    if (currentCart.length === 0) {
+        cartContainer.innerHTML = '<p class="empty-cart-msg">თქვენი კალათა ცარიელია</p>';
+        if (cartTotalElem) cartTotalElem.textContent = '0 ₾';
+        if (cartCountBadge) cartCountBadge.textContent = '0';
+        return;
+    }
+
+    let totalSum = 0;
+    let totalQuantity = 0;
+
+    cartContainer.innerHTML = currentCart.map(item => {
+        const itemTotal = item.price * item.quantity;
+        totalSum += itemTotal;
+        totalQuantity += item.quantity;
+
+        return `
+            <div class="cart-item" data-id="${item.id}">
+                <h4>${item.title || item.name}</h4>
+                <p>ფასი: ${item.price} ₾ × ${item.quantity} = ${itemTotal.toFixed(2)} ₾</p>
+                <div class="quantity-controls">
+                    <button class="decrease-btn" data-id="${item.id}">-</button>
+                    <span>${item.quantity}</span>
+                    <button class="increase-btn" data-id="${item.id}">+</button>
+                </div>
+                <button class="remove-btn" data-id="${item.id}">წაშლა</button>
+            </div>
+        `;
+    }).join('');
+
+    // ჰედერისა და ჯამის განახლება
+    if (cartTotalElem) cartTotalElem.textContent = `${totalSum.toFixed(2)} gel`;
+    if (cartCountBadge) cartCountBadge.textContent = totalQuantity;
+
+    attachCartEventListeners();
+}
+
+function attachCartEventListeners() {
+    const cartContainer = document.querySelector('#cart-container');
+    if (!cartContainer) return;
+
+    let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // რაოდენობის გაზრდა (+) - stock-ის გათვალისწინებით
+    cartContainer.querySelectorAll('.increase-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = Number(e.target.dataset.id);
+            const product = currentCart.find(item => item.id === id);
+            
+            if (product) {
+                const maxStock = product.stock || 999; 
+                if (product.quantity < maxStock) {
+                    product.quantity += 1;
+                    localStorage.setItem('cart', JSON.stringify(currentCart));
+                    renderCart();
+                }
+            }
+        });
+    });
+
+    // რაოდენობის შემცირება (-) - არ ჩამოდის 1-ზე ქვემოთ
+    cartContainer.querySelectorAll('.decrease-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = Number(e.target.dataset.id);
+            const product = currentCart.find(item => item.id === id);
+            
+            if (product && product.quantity > 1) {
+                product.quantity -= 1;
+                localStorage.setItem('cart', JSON.stringify(currentCart));
+                renderCart();
+            }
+        });
+    });
+
+    // წაშლა კალათიდან
+    cartContainer.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = Number(e.target.dataset.id);
+            currentCart = currentCart.filter(item => item.id !== id);
+            localStorage.setItem('cart', JSON.stringify(currentCart));
+            renderCart();
+        });
+    });
+}
+
+// ==========================================
+// ძებნის შედეგის შემოწმება (როცა შედეგი არ არის)
+// ==========================================
+function renderSearchResults(products) {
+    const resultsContainer = document.querySelector('#search-results-container');
+    if (!resultsContainer) return;
+
+    // A5 / ძებნის შეტყობინება, თუ პროდუქტი ვერ მოიძებნა
+    if (!products || products.length === 0) {
+        resultsContainer.innerHTML = '<p class="no-results-msg">product couldn\'t found</p>';
+        return;
+    }
+
+    resultsContainer.innerHTML = products.map(p => `
+        <div class="product-card">
+            <h3>${p.title}</h3>
+            <p>${p.price} gel</p>
+        </div>
+    `).join('');
+}
+
+
+document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); renderCart(); });

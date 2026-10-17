@@ -486,3 +486,101 @@ Format:
 **Type:** explain
 **What I did:** Confirmed the student's answer and sharpened it: the `if` tests the phone and the `return` exits the `submit` handler early, so the lines below (orderData, fetch) never run and nothing is sent. No code changed.
 **Files changed:** none
+
+### 68 · 2026-10-17 22:57
+**Prompt:**
+> აუ სადღაც ბრჭყალი მეშლება დიდი ალბათობით იპოვნე ბაგი რა დამეთხარა თვალები
+**Type:** debug
+**What I did:** Ran `node --check js/app.js`. Node reports line 378, but the real cause is line 310: `textContent = `${totalSum``.toFixed(2)} gel;` has stray backticks and no closing backtick, so the template opened there never closes and swallows everything up to the next backtick on line 377 — that is why the error appears at 378 and looks unrelated. Lines 379 and 380 have the same stray-backtick mistake inside the template. Hinted at the exact lines and left the fix to the student.
+**Files changed:** none
+
+### 69 · 2026-10-17 22:59
+**Prompt:**
+> ორი და დასვი რა ბარემ მეზარება თავიდან იმხელა კოდია თვალები მიჭრელდება
+**Type:** code
+**What I did:** The student answered the check question correctly (two backticks). Fixed the three lines with misplaced backticks: line 310 restored to a proper template, and lines 379-380 dropped their stray inner backticks (they already sit inside the template opened on line 377). `node --check js/app.js` now passes. Explained the three lines and asked a check question.
+**Files changed:** `js/app.js` (lines 310, 379, 380)
+
+### 70 · 2026-10-17 23:00
+**Prompt:**
+> კოდი ხო სწორია კკალათის ფუნქციისთვის? ლოგიკა ხო სწორია
+**Type:** review
+**What I did:** Reviewed `renderCart()` and `attachCartEventListeners()` in app.js. The body logic is correct (totals, increase/decrease/remove, empty message). The real problem is that `renderCart()` is never called from outside itself: not on `DOMContentLoaded` and not after `addToCart(product)` on line 42, so the sidebar never draws. Also `.cart-count-badge` does not exist in index.html, so the count is never shown. Hinted and left the fix to the student.
+**Files changed:** none
+
+### 71 · 2026-10-17 23:03
+**Prompt:**
+> ჯან დაბა გვერდის ჩატვირთვისას უნდა ჩასვა და ფუნქციის ბოლოს ედ თო ქართი პროდუქტებს როცა ამატებ
+**Type:** explain
+**What I did:** Confirmed the student's answer: call `renderCart()` on page load (inside `DOMContentLoaded`) and after adding a product. Warned about where the second call goes: putting it at the end of `addToCart` in storage.js would throw `ReferenceError` on product.html, because that page does not load app.js. Recommended calling it in app.js instead — at the end of the click handler on line 42. Left the typing to the student.
+**Files changed:** none
+
+### 72 · 2026-10-17 23:04
+**Prompt:**
+> ჩავსი ბარემ შენ რა ლოგიკა ჩემი დაწერილია ამიტომ უფლება გაქვს უბრალოდ გადაადგილო და გაასწორო რაც გასასწორებელია
+**Type:** code
+**What I did:** Added the two missing `renderCart()` calls without touching the student's cart logic: inside the add-to-cart click handler (lines 42-45, after `addToCart(product)`) and inside the `DOMContentLoaded` handler (line 389). `node --check js/app.js` passes. The sidebar now draws on load and refreshes after adding an item.
+**Files changed:** `js/app.js` (lines 42-45, 389)
+
+### 73 · 2026-10-17 23:05
+**Prompt:**
+> გასწორედა?
+**Type:** review
+**What I did:** Tested in a real headless browser (served the site over HTTP with a small Node static server). Confirmed the cart works end to end: `renderCart()` draws the saved cart on page load, adding an item from the grid refreshes the sidebar, and the +/remove buttons update the quantity, total and empty message. Also found a separate bug: clicking Add to cart from the grid also navigates to product.html?id=1, because the click bubbles to the card's handler (line 23-25). Flagged it and left the fix to the student.
+**Files changed:** none
+
+### 74 · 2026-10-17 23:08
+**Prompt:**
+> რაა? ვაფშე ვერ მივხვდი რა არის ეგ ბაგი :დ
+**Type:** explain
+**What I did:** Explained event bubbling in plain terms: the whole product card is clickable (lines 23-25) and the Add to cart button sits inside it, so a click on the button also reaches the card and opens the product page. Gave an analogy (knocking on a door inside a room also rings the room's bell) and hinted that `event.stopPropagation()` in the button handler stops the click from climbing. No code written; left the change to the student.
+**Files changed:** none
+
+### 75 · 2026-10-17 23:11
+**Prompt:**
+> რომელ ხაზზეა ვერ ვხედავ
+**Type:** explain
+**What I did:** Gave the exact location: the Add to cart button handler is lines 42-45. Pointed at line 42 for adding the `event` parameter and inside the block for `event.stopPropagation()`. No code written; left the change to the student.
+**Files changed:** none
+
+### 76 · 2026-10-17 23:14
+**Prompt:**
+> აბა ეხლა ნახე
+**Type:** review
+**What I did:** Reviewed the edit: line 42 now takes `(event)` and line 43 calls `event.stopPropagation()` before `addToCart(product)`; `node --check js/app.js` passes. Verified in a real headless browser: clicking Add to cart no longer navigates away, while clicking the card body still opens product.html?id=1.
+**Files changed:** none
+
+### 77 · 2026-10-17 23:15
+**Prompt:**
+> კაი ბარემ ქომითიც გაუშვი გითზე რო არ დამავიწყდეს
+**Type:** refused
+**What I did:** Declined to run `git commit` — the commit history is graded as the student's own work, so the agent may explain git commands but not create the commits. Offered the exact commands for the student to run themselves.
+**Files changed:** none
+
+### 78 · 2026-10-17 23:16
+**Prompt:**
+> ვერ მივხვდი ისევ ის ბაგიაა თუ რა ხდება ხო გავასქწორე
+**Type:** explain
+**What I did:** Clarified that the fix is complete: the Add to cart button no longer jumps to the product page (that was the bug), and clicking the rest of the card still opens the product page (intended behaviour, not a bug). No code changed.
+**Files changed:** none
+
+### 79 · 2026-10-17 23:17
+**Prompt:**
+> კაი ეხლა იცი რა ქენი მაშინ ადექი და შეამოწმე რიდმი ფაილში ყველა პუნქტი თუ სრულდება ა 1 იდან ე ს ჩათვლით ონლაინ მაღაზიაზე ანუ ბონუსის გარდა ყველა პუნქტი შესრულებული მაქვს პროექტში?
+**Type:** review
+**What I did:** Checked the Online Store rubric A1-E by reading all the code and testing a few points in a real headless browser. Met: A1, A5, B1, C1, C2, C3, D1-D4. Not met: A2 (no `response.ok`/error message), A3 (no loading message), A4 (no on-page error + Try again), B2 (no way back to the list), B3/C4 (first Next click reloads page 1; no "Page x of y"), E3 (no header counter). Listed them for the student and left the fixes to them.
+**Files changed:** none
+
+### 80 · 2026-10-17 23:19
+**Prompt:**
+> ნებართვა გაქვს, რომ ყველაფერი შეამწომო და რიდ მიფაილში ვერ გავიგე ჩემი რიდ მი უნდა დავაამატო? ეწერა შეცვალეო შენითო და რო ჩავანაცვლო რიდ მი საჭირო ფაილია არადა და იქნებ აარასწორდა გავიგე
+**Type:** explain
+**What I did:** Explained the README rule: keep the file, but replace its skeleton text with the student's own project README (rubric H4: what the app is, a screenshot, how to run it, the endpoints, what to improve). Declined to write the README — it is graded as the student's own work.
+**Files changed:** none
+
+### 81 · 2026-10-17 23:22
+**Prompt:**
+> ხოდა უნდა ჩავანავცლო?
+**Type:** explain
+**What I did:** Confirmed: do not delete `README.md`; replace its contents with the student's own project README, then commit it. Listed what H4 requires. No code changed.
+**Files changed:** none
