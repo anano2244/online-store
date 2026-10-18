@@ -51,6 +51,7 @@ async function renderProducts(productsToRender = null) {
 const searchInput = document.querySelector('#search-input');
 if (searchInput) {
     searchInput.addEventListener('input', async (e) => {
+        currentPage = 1;
         const query = e.target.value.trim();
         if (query === '') {
             renderProducts();
@@ -89,6 +90,7 @@ const categorySelect = document.getElementById('category-select');
 
 if (categorySelect) {
         categorySelect.addEventListener('change', async (event) => {
+            currentPage = 1;
             const selectedCategory = event.target.value;
 
             if (selectedCategory === '') {
@@ -365,14 +367,12 @@ function attachCartEventListeners() {
     });
 }
 
-// ==========================================
-// ძებნის შედეგის შემოწმება (როცა შედეგი არ არის)
-// ==========================================
+
 function renderSearchResults(products) {
     const resultsContainer = document.querySelector('#search-results-container');
     if (!resultsContainer) return;
 
-    // A5 / ძებნის შეტყობინება, თუ პროდუქტი ვერ მოიძებნა
+
     if (!products || products.length === 0) {
         resultsContainer.innerHTML = '<p class="no-results-msg">product couldn\'t found</p>';
         return;
