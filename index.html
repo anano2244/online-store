@@ -14,6 +14,7 @@
         <select id="category-select">
           <option value="">all categories</option>
         </select>
+        <span class="cart-counter">Cart: <span class="cart-count-badge">0</span></span>
     </div>
    <select id="sort-select">
     <option value="">Default sorting</option>
@@ -39,7 +40,7 @@
         </div>
 
     
-        <form id="checkout-form">
+        <form id="checkout-form" novalidate>
             <h4>Order!!!</h4>
             <input type="text" id="fullname" placeholder="name and surname " required style="width: 100%; margin-bottom: 10px;">
             <input type="text" id="phone" placeholder="phone" required style="width: 100%; margin-bottom: 10px;">

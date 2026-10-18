@@ -21,10 +21,13 @@ async function renderProducts(productsToRender = null) {
         return;
     }
     shopContainer.innerHTML = '';
+    const cart = getCart();
     products.forEach(product => {
     const formattedPrice = product.price.toFixed(2);
     const brandName = product.brand ? product.brand : 'there is no brand';
     const isOutOfStock = product.stock === 0 || product.availabilityStatus === ' Out of stock';
+    const cartItem = cart.find(item => item.id === product.id);
+    const cartLabel = cartItem ? `In cart (${cartItem.quantity})` : 'Add to cart';
     const productCard = document.createElement('div');
     productCard.classList.add('product-card'); 
     productCard.addEventListener('click', () => {
@@ -44,12 +47,14 @@ async function renderProducts(productsToRender = null) {
         <p class="price">$${formattedPrice}</p>
         ${product.discountPercentage ? '<p class="discount">Discount: -' + product.discountPercentage + '%</p>' : ''}
         <p class="stock">stock status: ${product.availabilityStatus}</p>
-        <button class="add-to-cart-btn" ${isOutOfStock ? 'disabled' : ''}>${isOutOfStock ? 'out of stock' : ' Add to cart'}</button> `;
+        <button class="add-to-cart-btn" ${isOutOfStock ? 'disabled' : ''}>${isOutOfStock ? 'out of stock' : cartLabel}</button> `;
         const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
         addToCartBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             addToCart(product);
             renderCart();
+            const added = getCart().find(item => item.id === product.id);
+            addToCartBtn.textContent = `In cart (${added.quantity})`;
         });
         
     shopContainer.appendChild(productCard);
@@ -81,25 +86,25 @@ if (searchInput) {
     });
 }
 async function loadCategories() {
-  try {
-        const res = await fetch('https://dummyjson.com/products/categories');
-         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const categories = await res.json();
-        const select = document.getElementById('category-select');
-        if (select) {
-           categories.forEach(category => {
-                const option = document.createElement('option');
-                const name = typeof category === 'string' ? category : category.name;
-                const slug = typeof category === 'string' ? category : category.slug;
-                
-                option.value = slug;
-                option.textContent = name;
-                select.appendChild(option);
-            });
-        }
+    try {
+        const categories = await fetchCategories();
+        renderCategoryOptions(categories);
     } catch (err) {
         console.error(err);
     }
+}
+
+function renderCategoryOptions(categories) {
+    const select = document.getElementById('category-select');
+    if (!select) return;
+    categories.forEach(category => {
+        const name = typeof category === 'string' ? category : category.name;
+        const slug = typeof category === 'string' ? category : category.slug;
+        const option = document.createElement('option');
+        option.value = slug;
+        option.textContent = name;
+        select.appendChild(option);
+    });
 }
 
 const categorySelect = document.getElementById('category-select');
@@ -205,26 +210,15 @@ function renderPagination(totalProducts) {
     }
 const phoneInput = document.querySelector('#phone');
 
-if (phoneInput) {
-    phoneInput.addEventListener('input', (e) => {
-        const phoneValue = e.target.value.trim();
-        const phoneRegex = /^\d+$/;
-        
-        let errorMsg = document.querySelector('#form-error-msg');
-        if (!errorMsg) {
-            errorMsg = document.createElement('div');
-            errorMsg.id = 'form-error-msg';
-            errorMsg.style.color = 'red';
-            errorMsg.style.margin = '10px 0';
-            phoneInput.parentNode.insertBefore(errorMsg, phoneInput);
-        }
-
-        if (phoneValue !== '' && !phoneRegex.test(phoneValue)) {
-            errorMsg.textContent = 'Please enter only digits for the phone number!';
-        } else {
-            errorMsg.textContent = '';
-        }
-    });
+function showFieldError(input, ok, message) {
+    let msg = input.nextElementSibling;
+    if (!msg || !msg.classList.contains('field-error')) {
+        msg = document.createElement('div');
+        msg.className = 'field-error';
+        input.after(msg);
+    }
+    msg.textContent = ok ? '' : message;
+    return ok;
 }
 
 // ფორმა
@@ -234,21 +228,17 @@ if (checkoutForm) {
     checkoutForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        const fullnameInput = document.querySelector('#fullname');
+        const emailInput = document.querySelector('#email');
+        const addressInput = document.querySelector('#address');
         const phone = phoneInput ? phoneInput.value.trim() : '';
-        let errorMsg = document.querySelector('#form-error-msg');
-        if (!errorMsg) {
-            errorMsg = document.createElement('div');
-            errorMsg.id = 'form-error-msg';
-            errorMsg.style.color = 'red';
-            errorMsg.style.margin = '10px 0';
-            phoneInput.parentNode.insertBefore(errorMsg, phoneInput);
-        }
 
-        if (phone === '' || !/^\d+$/.test(phone)) {
-            errorMsg.textContent = 'Please enter only digits for the phone number!';
-            return;
-        }
-        errorMsg.textContent = '';
+        const okFullname = showFieldError(fullnameInput, fullnameInput.value.trim().length >= 3, 'Please enter your full name (at least 3 characters).');
+        const okEmail = showFieldError(emailInput, /^\S+@\S+\.\S+$/.test(emailInput.value.trim()), 'Please enter a valid email address.');
+        const okAddress = showFieldError(addressInput, addressInput.value.trim() !== '', 'Address is required.');
+        const okPhone = showFieldError(phoneInput, /^\d+$/.test(phone), 'Please enter only digits for the phone number.');
+
+        if (!okFullname || !okEmail || !okAddress || !okPhone) return;
 
         const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
         const submitBtn = checkoutForm.querySelector('button[type="submit"]');
@@ -275,6 +265,7 @@ if (checkoutForm) {
 
             if (response.ok) {
                 localStorage.removeItem('cart');
+                renderCart();
                 checkoutForm.reset();
 
                 // შედეგის გამოჩენა გვერდზე (UI-ში) დივის მეშვეობით
@@ -396,3 +387,4 @@ function attachCartEventListeners() {
 
 
 document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); renderCart(); });
+window.addEventListener('pageshow', () => { renderCart(); });

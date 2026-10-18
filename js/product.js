@@ -8,6 +8,8 @@ if (productId) {
     .then(product => {
            if (!product) return;
 
+            const isOutOfStock = product.stock === 0;
+
             container.innerHTML = `
                 <div class="product-detail-wrapper">
                     <div class="product-gallery">
@@ -25,7 +27,7 @@ if (productId) {
                         <p class="shipping">Shipping Information: ${product.shippingInformation || 'No information available'}</p>
                         <p class="rating-widget">Rating: ${product.rating} / 5</p>
                         <p class="description">${product.description}</p>
-                        <button id="add-to-cart-btn">Add to Cart</button>
+                        <button id="add-to-cart-btn" ${isOutOfStock ? 'disabled' : ''}>${isOutOfStock ? 'Out of stock' : 'Add to Cart'}</button>
                     </div>
                 </div>
 
