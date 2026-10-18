@@ -13,14 +13,18 @@ async function fetchProducts(limit = 12, skip = 0) {
     }
 }
 async function fetchCategories(){
-    try{
+    try {
         const response = await fetch(`${BASE_URL}/products/categories`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         return await response.json();
     } catch (error) {
-        console.error('error!couldn\'t get categories:', error);
-        return [];
+        console.error('error! couldn\'t get categories:', error);
+        throw error;
     }
 }
+
 async function searchProducts(query) {
     try {
         const response = await fetch(`${BASE_URL}/products/search?q=${query}`);
