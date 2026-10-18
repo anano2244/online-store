@@ -1,13 +1,20 @@
 const shopContainer = document.querySelector('#shop-container');
 let currentPage = 1;
 const limit = 12;
+let currentSortQuery = '';
 async function renderProducts(productsToRender = null) {
     let products = productsToRender;
     if (!products) {
         const skip = (currentPage -1) * limit;
-        const data = await fetchProducts(limit, skip);
-        products = data.products;
-        renderPagination (data.total);
+        shopContainer.innerHTML = '<p>Loading…</p>';
+        try {
+            const data = await fetchProducts(limit, skip);
+            products = data.products;
+            renderPagination (data.total);
+        } catch (error) {
+            showLoadError();
+            return;
+        }
     }
     if (!products || products.length === 0) {
         shopContainer.innerHTML = '<p class="error-message">products couldn\'t found.</p>';
@@ -48,6 +55,14 @@ async function renderProducts(productsToRender = null) {
     shopContainer.appendChild(productCard);
     });
 }
+function showLoadError() {
+    shopContainer.innerHTML = `
+        <p class="error-message">Could not load products. Please try again.</p>
+        <button id="retry-btn">Try again</button>
+    `;
+    document.querySelector('#retry-btn').addEventListener('click', () => renderProducts());
+}
+
 const searchInput = document.querySelector('#search-input');
 if (searchInput) {
     searchInput.addEventListener('input', async (e) => {
@@ -56,20 +71,23 @@ if (searchInput) {
         if (query === '') {
             renderProducts();
         } else {
-            const data = await searchProducts(query);
-            renderProducts(data.products);
+            try {
+                const data = await searchProducts(query);
+                renderProducts(data.products);
+            } catch (error) {
+                showLoadError();
+            }
         }
     });
 }
 async function loadCategories() {
-    console.log('loadCategories works!'); 
-    try {
+  try {
         const res = await fetch('https://dummyjson.com/products/categories');
+         if (!res.ok) throw new Error('HTTP ' + res.status);
         const categories = await res.json();
         const select = document.getElementById('category-select');
         if (select) {
-            console.log(categories); 
-            categories.forEach(category => {
+           categories.forEach(category => {
                 const option = document.createElement('option');
                 const name = typeof category === 'string' ? category : category.name;
                 const slug = typeof category === 'string' ? category : category.slug;
@@ -78,11 +96,9 @@ async function loadCategories() {
                 option.textContent = name;
                 select.appendChild(option);
             });
-        } else {
-            console.log('cant find category-select !');
         }
     } catch (err) {
-        console.error('couldn\'t load categories:', err);
+        console.error(err);
     }
 }
 
@@ -104,6 +120,7 @@ if (categorySelect) {
     async function fetchProductsByCategory(slug) {
         try {
             const response = await fetch(`${BASE_URL}/products/category/${slug}`);
+             if (!response.ok) throw new Error('HTTP ' + response.status);
             const data = await response.json();
             return data;
         } catch (error) {
@@ -120,7 +137,7 @@ if (sortSelect) {
         const selectedCategory = categorySelect.value;
         const searchQuery = searchInput ? searchInput.value.trim() : '';
         
-        let url = `${BASE_URL}/product`;
+        let url = `${BASE_URL}/products`;
         
         if (searchQuery) {
             url = `${BASE_URL}/products/search?q=${searchQuery}`;
@@ -129,19 +146,27 @@ if (sortSelect) {
         }
         
         if (sortValue === 'price-asc') {
-            url += (url.includes('?') ? '&' : '?') + 'sortBy=price&order=asc';
+            currentSortQuery = 'sortBy=price&order=asc';
         } else if (sortValue === 'price-desc') {
-            url += (url.includes('?') ? '&' : '?') + 'sortBy=price&order=desc';
+            currentSortQuery = 'sortBy=price&order=desc';
         } else if (sortValue === 'rating') {
-            url += (url.includes('?') ? '&' : '?') + 'sortBy=rating&order=desc';
+            currentSortQuery = 'sortBy=rating&order=desc';
+        } else {
+            currentSortQuery = '';
         }
-        
+
+        currentPage = 1;
+        url += (url.includes('?') ? '&' : '?') + (currentSortQuery ? currentSortQuery + '&' : '') +
+            `limit=${limit}&skip=${(currentPage - 1) * limit}`;
+
         try {
             const res = await fetch(url);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
             const data = await res.json();
             renderProducts(data.products);
+            renderPagination(data.total);
         } catch (error) {
-            console.error('Sorting error:', error);
+            showLoadError();
         }
     });
 }
@@ -161,7 +186,7 @@ function renderPagination(totalProducts) {
         prevButton.disabled = currentPage === 1;
         prevButton.addEventListener('click', async () => {
             currentPage--;
-            const data = await fetchProducts(limit, (currentPage - 1) * limit);
+            const data = await fetchProducts(limit, (currentPage - 1) * limit, currentSortQuery);
             await renderProducts(data.products);
             renderPagination(totalProducts);
         });
@@ -172,7 +197,7 @@ function renderPagination(totalProducts) {
         nextButton.disabled = currentPage === totalPages;
         nextButton.addEventListener('click', async () => {
             currentPage++;
-            const data = await fetchProducts(limit, (currentPage - 1) * limit);
+            const data = await fetchProducts(limit, (currentPage - 1) * limit, currentSortQuery);
             await renderProducts(data.products);
             renderPagination(totalProducts);
         });
@@ -261,7 +286,7 @@ if (checkoutForm) {
                     successMsg.style.margin = '10px 0';
                     checkoutForm.parentNode.insertBefore(successMsg, checkoutForm);
                 }
-                successMsg.textContent = `Order placed successfully! Order ID: ${result.id}`;
+                successMsg.textContent = `Order placed! ID: ${result.id} — total: $${result.total}, discounted total: $${result.discountedTotal}, products: ${result.totalProducts}, quantity: ${result.totalQuantity}`;
             } else {
                 console.error('Failed to place order.');
             }
@@ -284,8 +309,8 @@ function renderCart() {
 
     // A5 პუნქტი: თუ კალათა ცარიელია
     if (currentCart.length === 0) {
-        cartContainer.innerHTML = '<p class="empty-cart-msg">თქვენი კალათა ცარიელია</p>';
-        if (cartTotalElem) cartTotalElem.textContent = '0 ₾';
+        cartContainer.innerHTML = '<p class="empty-cart-msg">Your cart is empty</p>';
+        if (cartTotalElem) cartTotalElem.textContent = '$0.00';
         if (cartCountBadge) cartCountBadge.textContent = '0';
         return;
     }
@@ -301,19 +326,19 @@ function renderCart() {
         return `
             <div class="cart-item" data-id="${item.id}">
                 <h4>${item.title || item.name}</h4>
-                <p>ფასი: ${item.price} ₾ × ${item.quantity} = ${itemTotal.toFixed(2)} ₾</p>
+                <p>Price: $${item.price} × ${item.quantity} = $${itemTotal.toFixed(2)}</p>
                 <div class="quantity-controls">
                     <button class="decrease-btn" data-id="${item.id}">-</button>
                     <span>${item.quantity}</span>
                     <button class="increase-btn" data-id="${item.id}">+</button>
                 </div>
-                <button class="remove-btn" data-id="${item.id}">წაშლა</button>
+                <button class="remove-btn" data-id="${item.id}">Remove</button>
             </div>
         `;
     }).join('');
 
     // ჰედერისა და ჯამის განახლება
-    if (cartTotalElem) cartTotalElem.textContent = `${totalSum.toFixed(2)} gel`;
+    if (cartTotalElem) cartTotalElem.textContent = `$${totalSum.toFixed(2)}`;
     if (cartCountBadge) cartCountBadge.textContent = totalQuantity;
 
     attachCartEventListeners();
@@ -368,23 +393,6 @@ function attachCartEventListeners() {
 }
 
 
-function renderSearchResults(products) {
-    const resultsContainer = document.querySelector('#search-results-container');
-    if (!resultsContainer) return;
-
-
-    if (!products || products.length === 0) {
-        resultsContainer.innerHTML = '<p class="no-results-msg">product couldn\'t found</p>';
-        return;
-    }
-
-    resultsContainer.innerHTML = products.map(p => `
-        <div class="product-card">
-            <h3>${p.title}</h3>
-            <p>${p.price} gel</p>
-        </div>
-    `).join('');
-}
 
 
 document.addEventListener('DOMContentLoaded',()=> { renderProducts(); loadCategories(); renderCart(); });

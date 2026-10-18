@@ -1,7 +1,7 @@
 const BASE_URL ='https://dummyjson.com';
-async function fetchProducts(limit = 12, skip = 0) {
+async function fetchProducts(limit = 12, skip = 0, sort = '') {
     try {
-        const response = await fetch(`${BASE_URL}/products?limit=${limit}&skip=${skip}`);
+        const response = await fetch(`${BASE_URL}/products?limit=${limit}&skip=${skip}${sort ? '&' + sort : ''}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

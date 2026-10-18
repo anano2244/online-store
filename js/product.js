@@ -1,6 +1,5 @@
 const queryString = window.location.search;
 const productId = queryString.replace("?id=", "");
-console.log(productId);
 
 if (productId) {
     const container = document.querySelector("#product-detail-container");
@@ -26,7 +25,7 @@ if (productId) {
                         <p class="shipping">Shipping Information: ${product.shippingInformation || 'No information available'}</p>
                         <p class="rating-widget">Rating: ${product.rating} / 5</p>
                         <p class="description">${product.description}</p>
-                        <button id="add-to-cart-btn" style="background-color: rgb(170, 221, 221);">Add to Cart</button>
+                        <button id="add-to-cart-btn">Add to Cart</button>
                     </div>
                 </div>
 
@@ -46,7 +45,10 @@ if (productId) {
             `;
 
             const addToCartBtn = container.querySelector('#add-to-cart-btn');
-            addToCartBtn.addEventListener('click', () => addToCart(product));
+            addToCartBtn.addEventListener('click', () => {
+                addToCart(product);
+                addToCartBtn.textContent = 'Added to cart ✓';
+            });
         })
         .catch(error => {
             container.innerHTML = `
@@ -59,4 +61,7 @@ if (productId) {
                 location.reload();
             });
         });
+} else {
+    document.querySelector("#product-detail-container").innerHTML =
+        '<p>No product selected. <a href="index.html">Back to the list</a></p>';
 }
