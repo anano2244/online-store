@@ -41,12 +41,14 @@ async function searchProducts(query) {
 
 async function fetchProductDetails(id) {
     try {
-        const response = await fetch(`https://dummyjson.com/products/${id}`);
+        const response = await fetch(`${BASE_URL}/products/${id}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const product = await response.json();
-        
-        console.log(product);
         return product;
     } catch (error) {
         console.error("Error fetching product details:", error);
+        throw error;
     }
 }
