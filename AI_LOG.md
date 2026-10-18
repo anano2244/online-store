@@ -612,3 +612,31 @@ Format:
 **Type:** code
 **What I did:** Explained the C4 fix and showed the code for the student to type: change `const skip = (--currentPage) * limit;` in `renderProducts` to `const skip = (currentPage - 1) * limit;` so pages are 1-based, and a corrected `renderPagination` that shows "Page x of y" and disables the buttons on the first/last page. Did not edit the file; explained each part and asked a check question.
 **Files changed:** none
+
+### 86 · 2026-10-18 13:31
+**Prompt:**
+> ბექთიქები აკლია და ბრჭყალია სადღაც გაპარული და იმხელა კოდია მოდი სენ ჩასვი სადაც საჭირო
+**Type:** debug
+**What I did:** Ran `node --check` to find the real breaks instead of guessing. Two of them: on line 15 the thumbnails `map(...)` had lost the backticks around its `<img>` template literal, so `<` was read as a token; and the `if (productId)` block had no closing brace `}` at the end of the file. Added the two backticks and the brace, then re-ran `node --check` (passes). Checked the stray-quote suspicion: all quotes are balanced, none found. Also flagged that `container` is now undefined (the rewrite dropped `const container = document.querySelector(...)`); left that for the student.
+**Files changed:** `js/product.js` (line 15, end of file)
+
+### 87 · 2026-10-18 13:50
+**Prompt:**
+> თემფლეითია მეფთან და მაგიტო
+**Type:** other
+**What I did:** The student's answer to my check question. Confirmed it is right in direction — it is a template literal — and sharpened the reason: the arrow function must return a string, and the HTML contains both double and single quotes, so a plain quote would clash; backticks allow both quote types plus `${img}`. (My first attempt to write this entry was denied, so entries 87-89 were written together.)
+**Files changed:** none
+
+### 88 · 2026-10-18 13:51
+**Prompt:**
+> რომელ ზენთან მეუბნები ვერ მივხვდი
+**Type:** explain
+**What I did:** The student did not understand which line I meant (the missing `container` line). Was starting to clarify where to put it when the student edited the file themselves and asked for a check (see 89).
+**Files changed:** none
+
+### 89 · 2026-10-18 13:52
+**Prompt:**
+> აბა ნახე ეხლა სწორად ჩავსვი?
+**Type:** review
+**What I did:** Checked the student's edit. They added `const container = document.querySelector('#product-detail-container');` on line 8, inside the `.then` callback. It works for `.then`, but the `.catch` (lines 50-51) also uses `container`, which is out of scope there (const is scoped to the `.then` callback), so the error branch would throw `container is not defined`. Told the student to move the line up to the top of the `if (productId) {` block. No code changed by me.
+**Files changed:** none
