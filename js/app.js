@@ -4,7 +4,7 @@ const limit = 12;
 async function renderProducts(productsToRender = null) {
     let products = productsToRender;
     if (!products) {
-        const skip = (--currentPage) * limit;
+        const skip = (currentPage -1) * limit;
         const data = await fetchProducts(limit, skip);
         products = data.products;
         renderPagination (data.total);
@@ -147,35 +147,35 @@ if (sortSelect) {
 const paginationContainer = document.querySelector('#pagination-container');
 
 function renderPagination(totalProducts) {
-    paginationContainer.innerHTML = ''; 
-    const totalPages = Math.ceil(totalProducts / limit);
+        paginationContainer.innerHTML = '';
+        const totalPages = Math.ceil(totalProducts / limit);
 
-    if (currentPage > 1) {
+        const pageInfo = document.createElement('span');
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        paginationContainer.appendChild(pageInfo);
+
         const prevButton = document.createElement('button');
         prevButton.textContent = '◀';
+        prevButton.disabled = currentPage === 1;
         prevButton.addEventListener('click', async () => {
             currentPage--;
-            const skip = (currentPage - 1) * limit;
-            const data = await fetchProducts(limit, skip);
-            await renderProducts(data.products); 
+            const data = await fetchProducts(limit, (currentPage - 1) * limit);
+            await renderProducts(data.products);
             renderPagination(totalProducts);
         });
         paginationContainer.appendChild(prevButton);
-    }
 
-    if (currentPage < totalPages) {
         const nextButton = document.createElement('button');
         nextButton.textContent = '▶';
+        nextButton.disabled = currentPage === totalPages;
         nextButton.addEventListener('click', async () => {
             currentPage++;
-            const skip = (currentPage -1) * limit;
-            const data = await fetchProducts(limit, skip);
+            const data = await fetchProducts(limit, (currentPage - 1) * limit);
             await renderProducts(data.products);
             renderPagination(totalProducts);
         });
         paginationContainer.appendChild(nextButton);
     }
-}
 const phoneInput = document.querySelector('#phone');
 
 if (phoneInput) {

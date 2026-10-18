@@ -2,13 +2,16 @@ const BASE_URL ='https://dummyjson.com';
 async function fetchProducts(limit = 12, skip = 0) {
     try {
         const response = await fetch(`${BASE_URL}/products?limit=${limit}&skip=${skip}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('error! could not get files:' , error);
-        return {products: [], total: 0};
+        console.error('error! could not get files: ', error);
+        throw error; 
     }
-} 
+}
 async function fetchCategories(){
     try{
         const response = await fetch(`${BASE_URL}/products/categories`);

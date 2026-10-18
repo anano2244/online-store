@@ -584,3 +584,31 @@ Format:
 **Type:** explain
 **What I did:** Confirmed: do not delete `README.md`; replace its contents with the student's own project README, then commit it. Listed what H4 requires. No code changed.
 **Files changed:** none
+
+### 82 · 2026-10-17 23:27
+**Prompt:**
+> რეებზე მელააპარაკები? ჩემი პროექტი ონლაინ მაღაზიაა და ა 3 პუნქტი საერთოდ არ ეწერა იქ
+**Type:** explain
+**What I did:** Explained that A2-A4, B3 and D1 are intentionally missing from the per-project table: PROJECTS_ka.md says those lines are the same for every project and live in SCORING_ka.md. Quoted SCORING_ka.md A3 (visible Loading message, 3 pts) and confirmed the finding stands. No code changed.
+**Files changed:** none
+
+### 83 · 2026-10-17 23:32
+**Prompt:**
+> მაგარიაა)) დაეწერა მერე, მგონია დავამტავრე და უცბად უიიიიი, სად ჯანდაბაში წერია ეგ პუნქტები რო ვნახო
+**Type:** explain
+**What I did:** Pointed to the exact file and lines: every line A-H lives in `assignment/SCORING_ka.md` (Georgian) and `assignment/SCORING.md` (English); A1-A5 are lines 21-25. No code changed.
+**Files changed:** none
+
+### 84 · 2026-10-17 23:46
+**Prompt:**
+> ვაიმე ძააან გავბზარდი ეხლა :) ერთად ვერ დაწერა ბარემ??? მეგონა უკვე დამთავრბეული მქონდა პროექტი რაააა პონტიააა!!! მომწერე რეები დამრჩა გასაკეთებელი
+**Type:** plan
+**What I did:** Listed what is still missing for A-E (A2, A3, A4, B2 back link, B3, C4 pagination, E3 header counter) and added a note on F/G/H. Gave the list in words and offered to start with one item; no code written.
+**Files changed:** none
+
+### 85 · 2026-10-17 23:50
+**Prompt:**
+> მოკლედ რააა მომეცი მიდი
+**Type:** code
+**What I did:** Explained the C4 fix and showed the code for the student to type: change `const skip = (--currentPage) * limit;` in `renderProducts` to `const skip = (currentPage - 1) * limit;` so pages are 1-based, and a corrected `renderPagination` that shows "Page x of y" and disables the buttons on the first/last page. Did not edit the file; explained each part and asked a check question.
+**Files changed:** none
