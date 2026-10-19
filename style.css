@@ -352,7 +352,7 @@ body {
     min-width: 0;
 }
 
-/* კალათის საიდბარი */
+
 .cart-sidebar {
     flex: 1;
     background: #f9f9f9;
@@ -367,7 +367,7 @@ body {
     color: #333;
 }
 
-/* ცალკეული პროდუქტი კალათაში */
+
 .cart-item {
     display: flex;
     flex-direction: column;
@@ -387,7 +387,7 @@ body {
     color: #374151;
 }
 
-/* რაოდენობის სამართავი ღილაკები (+ და -) */
+
 .quantity-controls {
     display: flex;
     align-items: center;
@@ -407,7 +407,6 @@ body {
     background-color: #d1d5db;
 }
 
-/* წაშლის ღილაკი */
 .remove-btn {
     background-color: #fee2e2;
     color: #b91c1c;
@@ -423,7 +422,7 @@ body {
     background-color: #fecaca;
 }
 
-/* კალათის ჯამური თანხა */
+
 #cart-total {
     margin: 15px 0;
     font-weight: bold;
@@ -431,7 +430,7 @@ body {
     color: #111827;
 }
 
-/* ცარიელი კალათის ტექსტი */
+
 .empty-cart-message {
     color: #6b7280;
     text-align: center;
@@ -439,7 +438,7 @@ body {
     font-style: italic;
 }
 
-/* შეკვეთის ფორმა */
+
 #checkout-form input {
     width: 100%;
     padding: 8px 12px;

@@ -296,15 +296,15 @@ if (checkoutForm) {
     });
 }
 function renderCart() {
-    const cartContainer = document.querySelector('#cart-container'); // კალათის კონტეინერი
-    const cartTotalElem = document.querySelector('#cart-total'); // საერთო ჯამის ელემენტი
-    const cartCountBadge = document.querySelector('.cart-count-badge'); // ჰედერში რაოდენობის ბეჯი
+    const cartContainer = document.querySelector('#cart-container'); 
+    const cartTotalElem = document.querySelector('#cart-total'); 
+    const cartCountBadge = document.querySelector('.cart-count-badge'); 
     
     const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
     
     if (!cartContainer) return;
 
-    // A5 პუნქტი: თუ კალათა ცარიელია
+  
     if (currentCart.length === 0) {
         cartContainer.innerHTML = '<p class="empty-cart-msg">Your cart is empty</p>';
         if (cartTotalElem) cartTotalElem.textContent = '$0.00';
@@ -334,7 +334,7 @@ function renderCart() {
         `;
     }).join('');
 
-    // ჰედერისა და ჯამის განახლება
+
     if (cartTotalElem) cartTotalElem.textContent = `$${totalSum.toFixed(2)}`;
     if (cartCountBadge) cartCountBadge.textContent = totalQuantity;
 
@@ -347,7 +347,7 @@ function attachCartEventListeners() {
 
     let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // რაოდენობის გაზრდა (+) - stock-ის გათვალისწინებით
+  
     cartContainer.querySelectorAll('.increase-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const id = Number(e.target.dataset.id);
@@ -364,7 +364,7 @@ function attachCartEventListeners() {
         });
     });
 
-    // რაოდენობის შემცირება (-) - არ ჩამოდის 1-ზე ქვემოთ
+   
     cartContainer.querySelectorAll('.decrease-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const id = Number(e.target.dataset.id);
@@ -378,7 +378,7 @@ function attachCartEventListeners() {
         });
     });
 
-    // წაშლა კალათიდან
+  
     cartContainer.querySelectorAll('.remove-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const id = Number(e.target.dataset.id);
