@@ -113,6 +113,7 @@ if (categorySelect) {
         categorySelect.addEventListener('change', async (event) => {
             currentPage = 1;
             const selectedCategory = event.target.value;
+            event.target.classList.toggle('active', selectedCategory !== '');
 
             if (selectedCategory === '') {
                 renderProducts();
@@ -159,6 +160,7 @@ if (sortSelect) {
         } else {
             currentSortQuery = '';
         }
+        event.target.classList.toggle('active', sortValue !== '');
 
         currentPage = 1;
         url += (url.includes('?') ? '&' : '?') + (currentSortQuery ? currentSortQuery + '&' : '') +
@@ -178,6 +180,12 @@ if (sortSelect) {
 
 const paginationContainer = document.querySelector('#pagination-container');
 
+async function goToPage() {
+    const data = await fetchProducts(limit, (currentPage - 1) * limit, currentSortQuery);
+    await renderProducts(data.products);
+    renderPagination(data.total);
+}
+
 function renderPagination(totalProducts) {
         paginationContainer.innerHTML = '';
         const totalPages = Math.ceil(totalProducts / limit);
@@ -189,23 +197,21 @@ function renderPagination(totalProducts) {
         const prevButton = document.createElement('button');
         prevButton.textContent = '◀';
         prevButton.disabled = currentPage === 1;
-        prevButton.addEventListener('click', async () => {
-            currentPage--;
-            const data = await fetchProducts(limit, (currentPage - 1) * limit, currentSortQuery);
-            await renderProducts(data.products);
-            renderPagination(totalProducts);
-        });
+        prevButton.addEventListener('click', () => { currentPage--; goToPage(); });
         paginationContainer.appendChild(prevButton);
+
+        for (let page = 1; page <= totalPages; page++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = page;
+            if (page === currentPage) pageButton.classList.add('active');
+            pageButton.addEventListener('click', () => { currentPage = page; goToPage(); });
+            paginationContainer.appendChild(pageButton);
+        }
 
         const nextButton = document.createElement('button');
         nextButton.textContent = '▶';
         nextButton.disabled = currentPage === totalPages;
-        nextButton.addEventListener('click', async () => {
-            currentPage++;
-            const data = await fetchProducts(limit, (currentPage - 1) * limit, currentSortQuery);
-            await renderProducts(data.products);
-            renderPagination(totalProducts);
-        });
+        nextButton.addEventListener('click', () => { currentPage++; goToPage(); });
         paginationContainer.appendChild(nextButton);
     }
 const phoneInput = document.querySelector('#phone');

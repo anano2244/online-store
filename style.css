@@ -328,6 +328,18 @@ body {
     background-color: #f3f4f6;
     border-color: #9ca3af;
 }
+
+#pagination-container button.active {
+    background-color: #10b981;
+    color: #ffffff;
+    border-color: #10b981;
+}
+
+#category-select.active,
+#sort-select.active {
+    border-color: #10b981;
+    background-color: #ecfdf5;
+}
 .main-layout {
     display: flex;
     gap: 20px;
