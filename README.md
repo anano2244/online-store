@@ -1,5 +1,5 @@
 # E-Commerce Web Application (Online Store)
-https://anano2244.github.io/online-store/ this is link from github and bonus x6
+Live demo (GitHub Pages, bonus X6): https://anano2244.github.io/online-store/
 
 ## 📌 Project Overview
 This project is a dynamic, single-page e-commerce web application built with Vanilla JavaScript, HTML5, and CSS3. It simulates a fully functional online shop that fetches real-time data from an external REST API (DummyJSON). The application allows users to browse products with pagination, search by keywords, filter items by category, sort products by price, view detailed product information, and manage a persistent shopping cart using localStorage.
@@ -26,7 +26,7 @@ Here is the architecture diagram illustrating how the client-side application in
 * *Dynamic Product Catalog:* Fetches products asynchronously from the API and renders them dynamically in grid layout.
 * *Pagination:* Supports multi-page navigation with limits and skips (limit=12, skip=...).
 * *Category Filtering & Search:* Real-time search by input text and category selection dropdown.
-* *Product Sorting:* Sorts products dynamically by price (ascending/descending).
+* *Product Sorting:* Sorts products dynamically by price (ascending/descending) and by rating.
 * *Detailed Product View:* Dedicated product detail page (product.html) displaying full item specs and images.
 * *Persistent Shopping Cart:* Fully interactive cart saved in localStorage. Items remain saved upon page reload.
 * *Cart Badge Indicator:* Real-time updates for total item count in the header navigation (.cart-count-badge).
@@ -56,6 +56,11 @@ The application communicates with the *DummyJSON REST API* using asynchronous Ja
 5. *Get Single Product:*  
    GET https://dummyjson.com/products/{id}  
    *Used on product.html to display individual product details.*
+
+6. *Place an Order (simulated):*  
+   POST https://dummyjson.com/carts/add  
+   Body: `{ "userId": 1, "products": [{ "id": 1, "quantity": 1 }] }`  
+   Used by the checkout form; displays the confirmation totals and empties the cart.
 
 ---
 

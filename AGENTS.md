@@ -84,3 +84,4 @@ They have not learned: ES modules (`import` / `export`), npm packages, bundlers,
 Student: add your own preferences for the agent below, for example "explain in Georgian" or "always ask me a question before you show code". Your rules can make the agent stricter, not looser.
 
 -
+

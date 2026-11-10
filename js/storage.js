@@ -10,10 +10,13 @@ function saveCart(cart) {
 function addToCart(product) {
     const cart = getCart();
     const existingIndex = cart.findIndex(item => item.id === product.id);
-    if(existingIndex > -1) {
-        cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
-    } else {
-        cart.push({...product, quantity: 1});
+    const maxStock = product.stock ?? 999;
+    if (existingIndex > -1) {
+        if (cart[existingIndex].quantity < maxStock) {
+            cart[existingIndex].quantity += 1;
+        }
+    } else if (maxStock > 0) {
+        cart.push({ ...product, quantity: 1 });
     }
     saveCart(cart);
 }
